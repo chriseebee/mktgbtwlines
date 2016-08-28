@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines.speech2text.ibm;
 
 
 import javax.sound.sampled.AudioFormat;
@@ -27,7 +27,8 @@ public class WatsonRecognizerMic {
 	   */
 	  public static void main(final String[] args) throws Exception {
 	    SpeechToText service = new SpeechToText();
-	    service.setUsernameAndPassword("d0a6414d-0694-4710-ad9c-b195aa88e7f7", "h4vad4oKV7SS");
+	    //TODO: replace with config
+	    service.setUsernameAndPassword("<<USERNAME>>", "<<PASSWORD>>");
 	    	
 	    ServiceCall<SpeechSession> session = service.createSession(SpeechModel.EN_UK_BROADBANDMODEL);
 

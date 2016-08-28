@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.*;

@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines.speech2text.google;
 
 import io.grpc.ManagedChannel;
 
@@ -14,6 +14,8 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
+import uk.me.chriseebee.mktgbtwlines2.AudioUtils;
 
 import com.examples.cloud.speech.AsyncRecognizeClient;
 import com.examples.cloud.speech.StreamingRecognizeClient;
@@ -60,8 +62,6 @@ public class GoogleClientApp {
 					e.printStackTrace();
 				}
 		    }
-			
-			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -1,7 +1,8 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,30 +30,19 @@ public class NLPPipeline {
 		
 	}
 	
-	public void processText (String chunk, long startTime) {
-		// The text coming in here needs breaking into sentences
-		StringReader reader = new StringReader(chunk);
-		DocumentPreprocessor dp = new DocumentPreprocessor(reader);
-	      for (List<HasWord> sentence : dp) {
-
-	    	  // Now let's parse the sentence
-	    	
-	    	  // 
-	      }
-	}
 	
 	/**
 	 * 
 	 * @param chunk
 	 * @param dateTimeMsAsString - this is the time the recording was made in Milliseconds since epoch
 	 */
-	public void processText2 (String chunk, String dateTimeMsAsString) {
+	public void processText (String chunk, Date date) {
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 		// create an empty Annotation just with the given text
-		Annotation document = new Annotation(chunk);
+		Annotation document = new Annotation(chunk.toLowerCase());
 
 		// run all Annotators on this text
 		pipeline.annotate(document);
@@ -76,11 +66,14 @@ public class NLPPipeline {
 		    // this is the NER label of the token
 		    String ne = token.get(NamedEntityTagAnnotation.class);
 		    
-		    if (pos.startsWith("NN%")) {
-		    	
-		    	// this is interesting to us, so let's init the interesting event
-		    	if (ev==null) { ev = new InterestingEvent(); }
-		    	
+		    // init the interesting event
+		    if (ev==null) { 
+	    		ev = new InterestingEvent(); 
+	    		ev.setDateTime(date.getTime());
+	    	}
+		    
+		    if (pos.startsWith("NN")) {
+		    	System.out.println("Word="+word+":"+pos);
 		    	// So it's possible that this word is a single product or 
 		    	// brand, 
 		    	// It could also be part of a multiple word product/brand 
@@ -106,28 +99,21 @@ public class NLPPipeline {
 		    	}
 		    	
 		    	if (pos.startsWith("JJ")) {
-		    		ev.setAdjective("word");
+		    		ev.setAdjective(word);
 		    	}
 		    	
 		    	if (pos.startsWith("VB")) {
-		    		ev.setAdjective("word");
+		    		ev.setIntent(word);
 		    	}
 		    }
 		    
 		   // System.out.println("Word = "+word + " : "+ pos + " : " + ne);
 	          String sentiment = sentence.get(SentimentCoreAnnotations.SentimentClass.class);
 	          ev.setSentiment(sentiment);
+	          
+	          System.out.println(ev.toString());
+
 		  }
-		  
-		  // Now try and find products and brands
-		  
-
-		  // this is the parse tree of the current sentence
-		  //Tree tree = sentence.get(TreeAnnotation.class);
-
-		  // this is the Stanford dependency graph of the current sentence
-		  //SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);
 		}
-
 	}
 }

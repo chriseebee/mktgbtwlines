@@ -12,6 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jackson.version>2.7.0</jackson.version>
   </properties>
   
    <repositories>
@@ -109,6 +110,28 @@
     <scope>system</scope>
     <systemPath>${project.basedir}/resources/stanford-english-corenlp-2016-01-10-models.jar</systemPath>
 </dependency>
+<dependency>
+  <groupId>com.fasterxml.jackson.dataformat</groupId>
+  <artifactId>jackson-dataformat-yaml</artifactId>
+  <version>${jackson.version}</version>
+</dependency>
+  <dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>${jackson.version}</version>
+  </dependency>
+    <dependency>
+    <!-- Note: core-annotations version x.y.0 is generally compatible with
+         (identical to) version x.y.1, x.y.2, etc. -->
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-annotations</artifactId>
+    <version>${jackson.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-core</artifactId>
+    <version>${jackson.version}</version>
+  </dependency>
   </dependencies>
   
   <build>

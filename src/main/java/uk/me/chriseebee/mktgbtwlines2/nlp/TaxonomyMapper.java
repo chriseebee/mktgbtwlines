@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

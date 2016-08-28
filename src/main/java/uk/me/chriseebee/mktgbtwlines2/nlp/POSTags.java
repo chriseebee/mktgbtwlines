@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 public class POSTags {
 	private static final String Coordinating_conjunction = "CC";

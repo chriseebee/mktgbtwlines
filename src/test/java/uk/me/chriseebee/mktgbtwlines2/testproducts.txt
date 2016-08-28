@@ -1,0 +1,6 @@
+watch
+shirt
+shoes
+jewellery
+cars
+furniture

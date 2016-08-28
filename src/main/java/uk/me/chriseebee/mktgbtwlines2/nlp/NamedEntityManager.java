@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -6,8 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class NamedEntityManager {
 	
+	Logger logger = LoggerFactory.getLogger(NamedEntityManager.class);
 	
 	public static String PRODUCT_TYPE = "P";
 	public static String BRAND_TYPE = "B";
@@ -34,28 +38,28 @@ public class NamedEntityManager {
             URI uri = this.getClass().getResource(PRODUCTS).toURI();
             products = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
         } catch (Exception e) {
-            e.printStackTrace();
+        	logger.error("Could not load Products File",e);
         }
         
         try {
             URI uri = this.getClass().getResource(PRODUCTS_FULL).toURI();
             productsFull = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
         } catch (Exception e) {
-            e.printStackTrace();
+        	logger.error("Could not load Products Full File",e);
         }
         
         try {
             URI uri = this.getClass().getResource(BRANDS).toURI();
             brands = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
         } catch (Exception e) {
-            e.printStackTrace();
+        	logger.error("Could not load Brands File",e);
         }
         
         try {
             URI uri = this.getClass().getResource(BRANDS_FULL).toURI();
             brandsFull = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
         } catch (Exception e) {
-            e.printStackTrace();
+        	logger.error("Could not load Brands Full File",e);
         }
 
 	}
@@ -104,8 +108,11 @@ public class NamedEntityManager {
 		}
 		
 		if (nounType==null || nounType.equals(PRODUCT_TYPE)) {
-			if (products.indexOf(lookup)>0) {
-				return PRODUCT_TYPE;
+			logger.info("Testing "+lookup+" against the list");
+			int indx = products.indexOf(lookup);
+			logger.info("Index is : "+indx);
+			if (indx>0) {
+				return PRODUCT_TYPE;	
 			}
 		}
 		return null;
@@ -120,6 +127,7 @@ public class NamedEntityManager {
 		}
 		
 		if (nounType==null || nounType.equals(PRODUCT_TYPE)) {
+			
 			if (productsFull.indexOf(lookup)>0) {
 				return PRODUCT_TYPE;
 			}

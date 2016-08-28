@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines.speech2text.wit;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class WitSpeechClient {
     	
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
-        con.setRequestProperty("Authorization", "Bearer AE4KPELX3MUNH5A2KPIAB2ZZIBBQNSOP");
+        con.setRequestProperty("Authorization", "Bearer <<TOKEN>>");
         con.setRequestProperty("Content-Type", "audio/wav");
         // con.setFollowRedirects(true); THIS IS STATIC AND DEFAULT TRUE, JUST ADDING FOR EXPLANATION
  

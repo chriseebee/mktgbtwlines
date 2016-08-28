@@ -1,10 +1,12 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines2.db.influx;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 
 public class InfluxClient {
 

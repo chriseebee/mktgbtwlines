@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines.speech2text.ibm;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
+
+import uk.me.chriseebee.mktgbtwlines2.AudioUtils;
 
 import com.ibm.watson.developer_cloud.http.HttpMediaType;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
@@ -34,7 +36,8 @@ public class App {
 System.out.println( "Hello World!" );
     	
     	SpeechToText service = new SpeechToText();
-    	service.setUsernameAndPassword("d0a6414d-0694-4710-ad9c-b195aa88e7f7", "h4vad4oKV7SS");
+    	//TODO: replace with config
+    	service.setUsernameAndPassword("<<USERNAME>>", "<<PASSWORD>>");
     	
     	ServiceCall<List<SpeechModel>> models =  service.getModels();
     	
