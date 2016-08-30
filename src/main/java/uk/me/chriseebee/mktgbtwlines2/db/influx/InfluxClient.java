@@ -18,7 +18,7 @@ public class InfluxClient {
     URL obj;
     
 	public InfluxClient() {
-		
+		//TODO: Replace ports with configuration calls
 		ConfigLoader cl = null;
 		try {
 			cl = ConfigLoader.getConfigLoader();

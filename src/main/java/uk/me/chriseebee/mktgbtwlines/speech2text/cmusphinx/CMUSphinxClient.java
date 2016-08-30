@@ -12,9 +12,9 @@ import edu.cmu.sphinx.api.SpeechResult;
 
 public class CMUSphinxClient {       
 	
-	static Logger logger = LoggerFactory.getLogger(CMUSphinxClient.class);
+	Logger logger = LoggerFactory.getLogger(CMUSphinxClient.class);
                                      
-    public static void main(String[] args) throws Exception {
+    public void liveProcessing() throws Exception {
                   
     	logger.info("Starting");
         Configuration configuration = new Configuration();

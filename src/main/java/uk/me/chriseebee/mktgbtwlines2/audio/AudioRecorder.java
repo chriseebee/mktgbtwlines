@@ -13,7 +13,7 @@ import java.util.Date;
  * 
  * http://www.codejava.net/coding/capture-and-record-sound-into-wav-file-with-java-sound-api
  */
-public class JavaSoundRecorder extends Thread {
+public class AudioRecorder extends Thread {
 	
 	public static final String START = "START";
 	public static final String STOP = "STOP";
@@ -37,7 +37,7 @@ public class JavaSoundRecorder extends Thread {
     //private DataLine.Info info =  null;
     private AudioInputStream ais = null;
     
-    public JavaSoundRecorder() {
+    public AudioRecorder() {
     	
     	au = new AudioUtils();
     	au.setupRecording();

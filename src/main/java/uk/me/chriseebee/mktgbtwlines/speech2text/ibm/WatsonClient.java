@@ -39,28 +39,12 @@ public class WatsonClient {
 		this.password = password;
 	}
 	
-	public SpeechResults processFile(File f) {
-	    SpeechToText service = new SpeechToText();
-	    service.setUsernameAndPassword(username, password);
-	    	
-	    int sampleRate = 16000;
-
-	    RecognizeOptions options = new RecognizeOptions.Builder()
-	      .continuous(true)
-	      .interimResults(true)
-	      .timestamps(false)
-	      .wordConfidence(false)
-	      .model(SpeechModel.EN_UK_BROADBANDMODEL.getName())
-	      //.inactivityTimeout(5) // use this to stop listening when the speaker pauses, i.e. for 5s
-	      .contentType(HttpMediaType.AUDIO_WAV + "; rate=" + sampleRate)
-	      .build();
-
-	    	
-	    SpeechResults results = service.recognize(f,options).execute();
-	    
-	    return results;
-	}
 	
+
+	
+	private void setup() {
+		
+	}
 	
 	public void processBuffers() {
 		 SpeechToText service = new SpeechToText();
@@ -186,5 +170,31 @@ public class WatsonClient {
 
 		    logger.info("Finished");
 		  }
+	
+	/*
+	 * Self Contained Tester for file based processing
+	 */
+	public SpeechResults processFile(File f) {
+	    SpeechToText service = new SpeechToText();
+	    service.setUsernameAndPassword(username, password);
+	    	
+	    int sampleRate = 16000;
+
+	    RecognizeOptions options = new RecognizeOptions.Builder()
+	      .continuous(true)
+	      .interimResults(true)
+	      .timestamps(false)
+	      .wordConfidence(false)
+	      .model(SpeechModel.EN_UK_BROADBANDMODEL.getName())
+	      //.inactivityTimeout(5) // use this to stop listening when the speaker pauses, i.e. for 5s
+	      .contentType(HttpMediaType.AUDIO_WAV + "; rate=" + sampleRate)
+	      .build();
+
+	    	
+	    SpeechResults results = service.recognize(f,options).execute();
+	    
+	    return results;
 	}
+	
+}
 

@@ -37,7 +37,7 @@ public class GoogleClientApp {
 	    
 	}
 	
-	public void doWork() {
+	public void processBuffers() {
 		au = new AudioUtils();
 		
 	    ManagedChannel channel;
@@ -45,8 +45,6 @@ public class GoogleClientApp {
 			
 			channel = AsyncRecognizeClient.createChannel(host, port);
 		    StreamingRecognizeClient client = null;
-		    
-		    au.startRecording();
 		    
 			try {
 				client = new StreamingRecognizeClient(channel, au.getAudioInputStream(), sampling);
