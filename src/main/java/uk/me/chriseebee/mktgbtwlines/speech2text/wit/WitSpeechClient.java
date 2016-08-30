@@ -1,5 +1,6 @@
 package uk.me.chriseebee.mktgbtwlines.speech2text.wit;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,17 +8,24 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.Files;
 
 public class WitSpeechClient {
-	URL obj;
-    
-
 	
-    private void sendAudioFile(String path) throws IOException {
+	URL obj;
+	Logger logger = LoggerFactory.getLogger(WitSpeechClient.class);
+	
+    public void sendAudioFile(String path) throws IOException {
         
         File filetosend = new File(path);
         byte[] bytearray = null;
+        
+        try {
+        	ByteArrayInputStream baos = new ByteArrayInputStream(new FileInputStream(filetoSend))):
+        }
         
     	try {
 			obj = new URL("https://api.wit.ai/speech?v=20160810");

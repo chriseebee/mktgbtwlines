@@ -14,14 +14,18 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import uk.me.chriseebee.mktgbtwlines2.AudioUtils;
+import uk.me.chriseebee.mktgbtwlines2.audio.AudioUtils;
 
 import com.examples.cloud.speech.AsyncRecognizeClient;
 import com.examples.cloud.speech.StreamingRecognizeClient;
 
 public class GoogleClientApp {
 
+	Logger logger = LoggerFactory.getLogger(GoogleClientApp.class);
+	
 	AudioUtils au;
 	String audioFile = "";
     String host = "speech.googleapis.com";
@@ -39,7 +43,6 @@ public class GoogleClientApp {
 	    ManagedChannel channel;
 		try {
 			
-			
 			channel = AsyncRecognizeClient.createChannel(host, port);
 		    StreamingRecognizeClient client = null;
 		    
@@ -53,19 +56,19 @@ public class GoogleClientApp {
 				client.recognizeParent();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Google Streaming Input Stream Recognize Error",e);
 			} finally {
 		      try {
 					client.shutdown();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Google Streaming Shutdown Error",e);
 				}
 		    }
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Google Streaming IO Error",e);
 		}
 
 	}

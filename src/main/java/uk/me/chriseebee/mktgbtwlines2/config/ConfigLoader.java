@@ -17,11 +17,21 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class ConfigLoader {
 
+	private static final String DEFAULT_CONFIG_FILE = "/config.yml";
 	Logger logger = LoggerFactory.getLogger(ConfigLoader.class);
 	URI uri= null;
 	AppConfig config;
 	
 	private static ConfigLoader _singleton = null;
+	
+	public static ConfigLoader getConfigLoader() throws Exception {
+		if (_singleton==null) {
+			_singleton = new ConfigLoader(DEFAULT_CONFIG_FILE);
+			_singleton.loadConfig();
+		}
+		
+		return _singleton;
+	}
 	
 	public static ConfigLoader getConfigLoader(String fileName) throws Exception {
 		if (_singleton==null) {
@@ -32,10 +42,11 @@ public class ConfigLoader {
 		return _singleton;
 	}
 	
+	
 	private ConfigLoader(String fileName) throws Exception {
 		
         try {
-            uri = this.getClass().getResource(fileName).toURI();
+            uri = this.getClass().getResource((fileName!=null) ? fileName : DEFAULT_CONFIG_FILE).toURI();
         } catch (Exception e) {
         	logger.error("Could not load config file",e);
         	throw e;

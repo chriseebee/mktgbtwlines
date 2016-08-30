@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class AppConfig {
 	
-	
+	private Map<String, String> audioOptions;
 	private Map<String, String> watsonKeys;
 	private Map<String, String> googleKeys;
 	private Map<String, String> witKeys;
@@ -32,6 +32,12 @@ public class AppConfig {
 	}
 	public void setInfluxParams(Map<String, String> influxParams) {
 		this.influxParams = influxParams;
+	}
+	public Map<String, String> getAudioOptions() {
+		return audioOptions;
+	}
+	public void setAudioOptions(Map<String, String> audioOptions) {
+		this.audioOptions = audioOptions;
 	}
 	
 	

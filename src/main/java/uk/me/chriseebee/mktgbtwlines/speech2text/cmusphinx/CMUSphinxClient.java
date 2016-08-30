@@ -1,17 +1,22 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines.speech2text.cmusphinx;
 
 
 import java.io.File;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 import edu.cmu.sphinx.api.SpeechResult;
 
-public class TranscriberDemo {       
+public class CMUSphinxClient {       
+	
+	static Logger logger = LoggerFactory.getLogger(CMUSphinxClient.class);
                                      
     public static void main(String[] args) throws Exception {
                   
-    	System.out.format("Starting");
+    	logger.info("Starting");
         Configuration configuration = new Configuration();
 
         //configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
@@ -26,12 +31,12 @@ public class TranscriberDemo {
 	     SpeechResult result;
 	     
 	     while ((result = recognizer.getResult()) != null) {
-	    	    System.out.println(result.getHypothesis());
+	    	   logger.info(result.getHypothesis());
 	    }
 	     //System.out.format("Hypothesis: %s\n", result.getHypothesis());
 	     // Pause recognition process. It can be resumed then with startRecognition(false).
 	     recognizer.stopRecognition();
 	     
-	     System.out.format("Stopping");
+	     logger.info("Stopping");
     }
 }

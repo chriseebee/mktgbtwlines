@@ -1,10 +1,18 @@
-package uk.me.chriseebee.mktgbtwlines2;
-// Borrowed from :http://stackoverflow.com/questions/5800649/detect-silence-when-recording
-
+package uk.me.chriseebee.mktgbtwlines2.audio;
 
 import javax.sound.sampled.*;
 import java.io.*;
 
+/**
+ * This class is not being used at present. Keeping it around in case i need the logic
+ * 
+ * I have borrowed this code from:
+ * 
+ * http://stackoverflow.com/questions/5800649/detect-silence-when-recording
+ * 
+ * @author 
+ *
+ */
 public class AudioSlienceTester {
 
 	    private File audioFile;

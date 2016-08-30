@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 import uk.me.chriseebee.mktgbtwlines2.db.influx.InfluxClient;
 
 public class QueueConsumer extends Thread {
@@ -19,7 +20,7 @@ public class QueueConsumer extends Thread {
     
     public QueueConsumer() {
     	influxClient = new InfluxClient();
-        this.queue = CollectionManager.getInstance().queue;
+        this.queue = ThreadCommsManager.getInstance().queue;
     }
 	  
     public void run() {

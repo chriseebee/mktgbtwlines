@@ -1,4 +1,6 @@
-package uk.me.chriseebee.mktgbtwlines2;
+package uk.me.chriseebee.mktgbtwlines2.audio;
+
+import java.util.Date;
 
 
 public class TimedAudioBuffer {
@@ -8,12 +10,12 @@ public class TimedAudioBuffer {
 	  private byte[] buffer = new byte[BYTES_PER_BUFFER];
 	  
 	  private long startDateTime;
+	  private long endDateTime;
 	  
 	  // As all will be 100ms, no need for endDateTime
 	  
-	public TimedAudioBuffer(byte[] buf, long startDateTime) {
-		this.buffer = buf;
-		this.startDateTime=startDateTime;
+	public TimedAudioBuffer(Date startDateTime) {
+		this.startDateTime=startDateTime.getTime();
 	}
 
 	public byte[] getBuffer() {
@@ -28,8 +30,12 @@ public class TimedAudioBuffer {
 		return startDateTime;
 	}
 
-	public void setStartDateTime(long startDateTime) {
-		this.startDateTime = startDateTime;
+	public void setStartDateTime(Date startDateTime) {
+		this.startDateTime = startDateTime.getTime();
+	}
+	
+	public void setEndDateTime(Date endDateTime) {
+		this.endDateTime = endDateTime.getTime();
 	}
 	
 	

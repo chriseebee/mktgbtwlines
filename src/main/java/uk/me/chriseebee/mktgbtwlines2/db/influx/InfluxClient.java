@@ -6,20 +6,30 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 
 public class InfluxClient {
 
     private static final String USER_AGENT = "Mozilla/5.0";
-    private static final String SERVER_NAME = "ec2-52-210-133-236.eu-west-1.compute.amazonaws.com";
     private static final String POST_URL = "http://SERVER:8086/write?db=newbliss";
 
     String influxHostname = "";
     URL obj;
     
 	public InfluxClient() {
+		
+		ConfigLoader cl = null;
+		try {
+			cl = ConfigLoader.getConfigLoader();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String influxHostname = cl.getConfig().getInfluxParams().get("hostname");
+		
     	try {
-			obj = new URL(POST_URL.replace("SERVER", SERVER_NAME));
+			obj = new URL(POST_URL.replace("SERVER", influxHostname));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
