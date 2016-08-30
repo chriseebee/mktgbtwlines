@@ -37,8 +37,12 @@ public class InfluxClient {
 	}
 	
 	
-    private void sendPOST(String buffer) throws IOException {
+    public void sendEventToInflux(InterestingEvent ev) throws IOException {
         
+		java.util.Date date= new java.util.Date();
+		String ts = date.getTime()+"000000";
+		String message = ev.toString();
+    	
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", USER_AGENT);
@@ -46,7 +50,7 @@ public class InfluxClient {
         // For POST only - START
         con.setDoOutput(true);
         OutputStream os = con.getOutputStream();
-        os.write(buffer.getBytes());
+        os.write(message.getBytes());
         os.flush();
         os.close();
         // For POST only - END
@@ -59,10 +63,5 @@ public class InfluxClient {
         
     }
     
-    public void sendEventToInflux(InterestingEvent ev) {
-		java.util.Date date= new java.util.Date();
-		String ts = date.getTime()+"000000";
-		String message = "laughcalc value="+tempVal+",range="+q.getRange()+",average="+avg+" "+ts;
-		queue.offer(message);
-    }
+
 }

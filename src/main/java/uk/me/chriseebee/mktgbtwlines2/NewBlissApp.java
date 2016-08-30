@@ -3,6 +3,7 @@ package uk.me.chriseebee.mktgbtwlines2;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import uk.me.chriseebee.mktgbtwlines.speech2text.ibm.App;
+import uk.me.chriseebee.mktgbtwlines2.audio.AudioRecorder;
 import uk.me.chriseebee.mktgbtwlines2.audio.NoiseTrigger;
 
 public class NewBlissApp {

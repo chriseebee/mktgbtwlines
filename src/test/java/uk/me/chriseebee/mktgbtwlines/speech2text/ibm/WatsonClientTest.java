@@ -27,7 +27,7 @@ public class WatsonClientTest {
 		TestFilesSetup tfs = new TestFilesSetup();
 		AppConfig ac = null; 
 		try {
-			ConfigLoader cl = ConfigLoader.getConfigLoader("/config.yml");
+			ConfigLoader cl = ConfigLoader.getConfigLoader();
 			ac = cl.getConfig();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -13,13 +13,13 @@ import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
 public class Speech2TextClientThread extends Thread {
 
 	
-	
     private String mode = null;
     private String buffer  = "";
     private int counter = 0;
     private volatile boolean running = true;
     
     public Speech2TextClientThread() {
+    	
     	
 		AppConfig ac = null; 
 		try {
