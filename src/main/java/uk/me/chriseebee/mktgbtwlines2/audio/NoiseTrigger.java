@@ -1,9 +1,19 @@
 package uk.me.chriseebee.mktgbtwlines2.audio;
 
-import com.darkprograms.speech.microphone.*;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
+
+import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
+
 
 public class NoiseTrigger extends Thread {
 
+	Logger logger = LoggerFactory.getLogger(NoiseTrigger.class);
+	
     private volatile boolean running = true;
     final int THRESHOLD = 20;
 
@@ -13,25 +23,24 @@ public class NoiseTrigger extends Thread {
 	   // mic.setAudioFile(new File("AudioTestNow.flac"));
 	    while(true){
 	        mic.open();
-	        
 	        int volume = mic.getAudioVolume();
 	        boolean isSpeaking = (volume > THRESHOLD);
 	        System.out.print("."+volume);
 	        if(isSpeaking){
 	            try {
-	                System.out.println("RECORDING...");
-	                // Send message to recording thread
-	                //mic.captureAudioToFile(mic.getAudioFile());//Saves audio to file.
+	                System.out.println(".");
+	          
 	                do{
+		                if (!ThreadCommsManager.getInstance().isRecording()) {
+		                	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(new Date());
+		                }
 	                	System.out.println(" Looping in recording mode. Volume = "+mic.getAudioVolume());
 	                    Thread.sleep(1000);//Updates every second
 	                }
 	                while(mic.getAudioVolume() > THRESHOLD);
-	                System.out.println("Looping back");//Restarts loops
 	            } catch (Exception e) {
-	                // TODO Auto-generated catch block
-	                e.printStackTrace();
-	                System.out.println("Error Occured");
+	                logger.error("Error Occured in Mic Threshold loop",e);
+	           
 	            }
 	            finally{
 	                mic.close();//Makes sure microphone closes on exit.
@@ -40,8 +49,7 @@ public class NoiseTrigger extends Thread {
 	        try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error Occured in thread sleep",e);
 			}//Updates every 0.1 second
 	    }
 	}

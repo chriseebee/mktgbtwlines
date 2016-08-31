@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import io.grpc.ManagedChannel;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -11,6 +12,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -24,13 +27,14 @@ import uk.me.chriseebee.mktgbtwlines.speech2text.ibm.WatsonClientTest;
 import com.examples.cloud.speech.AsyncRecognizeClient;
 import com.google.cloud.speech.v1beta1.StreamingRecognitionResult;
 import com.google.cloud.speech.v1beta1.SpeechRecognitionAlternative;
-import com.examples.cloud.speech.StreamingRecognizeClient2;
 import com.google.cloud.speech.v1beta1.StreamingRecognizeResponse;
 
 public class GoogleClientAppTest {
 
-	org.slf4j.Logger logger = LoggerFactory.getLogger(WatsonClientTest.class);
-	
+	  org.slf4j.Logger logger = LoggerFactory.getLogger(WatsonClientTest.class);
+	  
+	  private List<String> transcriptList = new ArrayList<String>();
+	  
 	
 	  @Test
 	  public void testFiles() throws InterruptedException, IOException {
@@ -43,7 +47,7 @@ public class GoogleClientAppTest {
 	    ManagedChannel channel = AsyncRecognizeClient.createChannel(host, port);
 	    
 	    for (int i=0;i<12;i++) {
-			logger.info("Filex "+i);
+			logger.info("File "+i);
 			URI uri = null;
 			try {
 				uri = this.getClass().getResource("/"+tfs.getFileNameList().get(i)).toURI();
@@ -52,10 +56,12 @@ public class GoogleClientAppTest {
 				e.printStackTrace();
 			}
 			Path path = Paths.get(uri);
-		    StreamingRecognizeClient2 client = new StreamingRecognizeClient2(channel, path.toString(), 16000);
+		    StreamingRecognizeClient2 client = new StreamingRecognizeClient2(channel, 16000);
 		    
 		    client.setup();
-		    client.recognize();
+		    FileInputStream fis = new FileInputStream(new File(uri));
+		    
+		    client.recognize(fis, new Date());
 		    
 		    List<StreamingRecognizeResponse> responses = client.getResponses();
 		    processResponse(responses);
@@ -72,7 +78,7 @@ public class GoogleClientAppTest {
 		       //System.out.println("IsFinal = "+res.getIsFinal());
 		       if (res.getIsFinal()) {
 			       for (SpeechRecognitionAlternative sra: res.getAlternativesList()) {
-			    	   System.out.println("*** Transcript = "+sra.getTranscript());
+			    	   logger.info("*** Transcript = "+sra.getTranscript());
 			       }
 			       return;
 		       }

@@ -2,174 +2,123 @@ package uk.me.chriseebee.mktgbtwlines.speech2text.google;
 
 import io.grpc.ManagedChannel;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.me.chriseebee.mktgbtwlines2.audio.AudioUtils;
+import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
+import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
+import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 
 import com.examples.cloud.speech.AsyncRecognizeClient;
-import com.examples.cloud.speech.StreamingRecognizeClient;
+import com.google.cloud.speech.v1beta1.SpeechRecognitionAlternative;
+import com.google.cloud.speech.v1beta1.StreamingRecognitionResult;
+import com.google.cloud.speech.v1beta1.StreamingRecognizeResponse;
 
 public class GoogleClientApp {
 
 	Logger logger = LoggerFactory.getLogger(GoogleClientApp.class);
 	
-	AudioUtils au;
-	String audioFile = "";
+	//String audioFile = "";
     String host = "speech.googleapis.com";
     Integer port = 443;
     Integer sampling = 16000;
 	
-	public GoogleClientApp() {
-
-	    
-	}
-	
-	public void processBuffers() {
-		au = new AudioUtils();
-		
-	    ManagedChannel channel;
+    private TimedAudioBuffer tab =null;
+    ManagedChannel channel = null;
+    StreamingRecognizeClient2 client = null;
+    
+	public GoogleClientApp() {  
 		try {
-			
 			channel = AsyncRecognizeClient.createChannel(host, port);
-		    StreamingRecognizeClient client = null;
-		    
-			try {
-				client = new StreamingRecognizeClient(channel, au.getAudioInputStream(), sampling);
-				Date startDate = new Date();
-				System.out.println("Time = "+startDate.toString());
-				client.setup();
-				client.recognizeParent();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				logger.error("Google Streaming Input Stream Recognize Error",e);
-			} finally {
-		      try {
-					client.shutdown();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					logger.error("Google Streaming Shutdown Error",e);
-				}
-		    }
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			logger.error("Google Streaming IO Error",e);
+			e.printStackTrace();
 		}
-
 	}
 	
-    public static void main( String[] args )
-    {
-    	GoogleClientApp gca = new GoogleClientApp();
-    	
-    	gca.doWork();
-    	
-//	    CommandLineParser parser = new DefaultParser();
-//
-//	    Options options = new Options();
-//	    options.addOption(
-//	        OptionBuilder.withLongOpt("file")
-//	            .withDescription("path to audio file")
-//	            .hasArg()
-//	            .withArgName("FILE_PATH")
-//	            .create());
-//	    options.addOption(
-//	        OptionBuilder.withLongOpt("host")
-//	            .withDescription("endpoint for api, e.g. speech.googleapis.com")
-//	            .hasArg()
-//	            .withArgName("ENDPOINT")
-//	            .create());
-//	    options.addOption(
-//	        OptionBuilder.withLongOpt("port")
-//	            .withDescription("SSL port, usually 443")
-//	            .hasArg()
-//	            .withArgName("PORT")
-//	            .create());
-//	    options.addOption(
-//	        OptionBuilder.withLongOpt("sampling")
-//	            .withDescription("Sampling Rate, i.e. 16000")
-//	            .hasArg()
-//	            .withArgName("RATE")
-//	            .create());
-//
-//	    try {
-//	      CommandLine line = parser.parse(options, args);
-//	      if (line.hasOption("file")) {
-//	        gca.setAudioFile(line.getOptionValue("file"));
-//	      } else {
-//	        System.err.println("An Audio file must be specified (e.g. /foo/baz.raw).");
-//	        System.exit(1);
-//	      }
-//
-//	      if (line.hasOption("host")) {
-//	        gca.setHost(line.getOptionValue("host"));
-//	      } else {
-//	        System.err.println("An API enpoint must be specified (typically speech.googleapis.com).");
-//	        System.exit(1);
-//	      }
-//
-//	      if (line.hasOption("port")) {
-//	        gca.setPort(Integer.parseInt(line.getOptionValue("port")));
-//	      } else {
-//	        System.err.println("An SSL port must be specified (typically 443).");
-//	        System.exit(1);
-//	      }
-//
-//	      if (line.hasOption("sampling")) {
-//	        gca.setSampling(Integer.parseInt(line.getOptionValue("sampling")));
-//	      } else {
-//	        System.err.println("An Audio sampling rate must be specified.");
-//	        System.exit(1);
-//	      }
-//	    } catch (ParseException exp) {
-//	      System.err.println("Unexpected exception:" + exp.getMessage());
-//	      System.exit(1);
-//	    }
+	public void processFile(File f) {
+        InputStream inputStream = null;
 
-    }
-
-	public String getAudioFile() {
-		return audioFile;
+	    if (f!=null) {
+		  try {
+			inputStream =  new FileInputStream(f);
+		  } catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		  }
+	    }
+  
+	    logger.info("Starting to process new File");
+		try {
+			client = new StreamingRecognizeClient2(channel, sampling);
+			Date startDate = new Date();
+			System.out.println("Time = "+startDate.toString());
+			client.setup();
+			client.recognize(inputStream, new Date());
+			processResponse(client.getResponses());
+		} catch (IOException | InterruptedException e) {
+			logger.error("Google Streaming Input Stream Recognize Error",e);
+		} finally {
+		  try {
+				client.shutdown();
+			} catch (Exception e) {
+				logger.error("Google Streaming Shutdown Error",e);
+			}
+		}
 	}
-
-	public void setAudioFile(String audioFile) {
-		this.audioFile = audioFile;
+	
+	
+	public void processBuffer(TimedAudioBuffer buffer) {
+	    
+	    logger.info("Starting to process new Buffer");
+		try {
+			ByteArrayInputStream is = new  ByteArrayInputStream(tab.getBuffer());
+			//AudioInputStream ais = new AudioInputStream(is, AudioFormat.WAV,(long)16000);
+			client = new StreamingRecognizeClient2(channel, sampling);
+			Date startDate = new Date();
+			System.out.println("Time = "+startDate.toString());
+			client.setup();
+			client.recognize(is, startDate );
+			processResponse(client.getResponses(),startDate);
+		} catch (IOException | InterruptedException e) {
+			logger.error("Google Streaming Input Stream Recognize Error",e);
+		} finally {
+	      try {
+				client.shutdown();
+			} catch (Exception e) {
+				logger.error("Google Streaming Shutdown Error",e);
+			}
+	    }
 	}
+	
+	/*
+	 * This method looks through all the responses and gets the 'final' transcriptions
+	 * which it then sends to the 
+	 */
+	 private void processResponse(List<StreamingRecognizeResponse> responses,Date date) {
+		  
+			for (StreamingRecognizeResponse r : responses) { 
+			    for (StreamingRecognitionResult res: r.getResultsList()) {
+			       //System.out.println("IsFinal = "+res.getIsFinal());
+			       if (res.getIsFinal()) {
+				       for (SpeechRecognitionAlternative sra: res.getAlternativesList()) {
+				    	   logger.info("*** Transcript = "+sra.getTranscript());
+				    	   ThreadCommsManager.getInstance().getNlpMessageQueue().add(new Transcription(sra.getTranscript(),date));
+				       }
+				       return;
+			       }
+			    }
+			}	    
+		    return;
+	    }
 
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public Integer getPort() {
-		return port;
-	}
-
-	public void setPort(Integer port) {
-		this.port = port;
-	}
-
-	public Integer getSampling() {
-		return sampling;
-	}
-
-	public void setSampling(Integer sampling) {
-		this.sampling = sampling;
-	}
 }

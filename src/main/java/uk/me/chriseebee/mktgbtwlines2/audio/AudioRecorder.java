@@ -2,6 +2,9 @@ package uk.me.chriseebee.mktgbtwlines2.audio;
 
 import javax.sound.sampled.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 
 import java.io.IOException;
@@ -15,11 +18,10 @@ import java.util.Date;
  */
 public class AudioRecorder extends Thread {
 	
-	public static final String START = "START";
-	public static final String STOP = "STOP";
+	Logger logger = LoggerFactory.getLogger(AudioRecorder.class);
 	
     // record duration, in milliseconds
-    private static final long RECORD_TIME = 200000;  // 10 seconds 
+    //private static final long RECORD_TIME = 200000;  // 10 seconds 
     private static final int BYTES_PER_BUFFER = 320000; //buffer size in bytes
 
     private volatile boolean running = true;
@@ -49,7 +51,7 @@ public class AudioRecorder extends Thread {
     
     public void run() {
         while (running) {
-        	if (ThreadCommsManager.getInstance().isContinueRecording()) {
+        	if (ThreadCommsManager.getInstance().isRecording()) {
         		Date d = new Date();
             	TimedAudioBuffer tab = new TimedAudioBuffer(d);
             	int bytesRead = 0;
@@ -65,12 +67,13 @@ public class AudioRecorder extends Thread {
 	            	ThreadCommsManager.getInstance().getAudioBufferQueue().add(tab);
             	} 
             	
-        		try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//        		try {
+//					Thread.sleep(10000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+            	ThreadCommsManager.getInstance().setRecording(false);
         	} else {
         		try {
 					ais.skip(BYTES_PER_BUFFER);
@@ -80,9 +83,6 @@ public class AudioRecorder extends Thread {
 				}
         	}
         }
-    }
-    
-  
-   
+    } 
  
 }

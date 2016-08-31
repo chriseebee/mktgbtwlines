@@ -1,5 +1,6 @@
 package uk.me.chriseebee.mktgbtwlines2.comms;
 
+import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
+import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 
 public class ThreadCommsManager {
 	
@@ -14,7 +16,7 @@ public class ThreadCommsManager {
 	
 	private static ThreadCommsManager _instance = null;
 	
-    private boolean continueRecording = false;
+    private boolean recording = false;
 	
 	private ThreadCommsManager() {}
 	
@@ -26,18 +28,22 @@ public class ThreadCommsManager {
 		return _instance;
 	}
 	
+	private ConcurrentLinkedQueue<Date> noiseDetectionQueue = new ConcurrentLinkedQueue<Date>();
 
 	private ConcurrentLinkedQueue<TimedAudioBuffer> audioBufferQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
 	
 	private ConcurrentLinkedQueue<InterestingEvent> influxMessageQueue = new ConcurrentLinkedQueue<InterestingEvent>();
+	
+	private ConcurrentLinkedQueue<Transcription> nlpMessageQueue = new ConcurrentLinkedQueue<Transcription>();
 
-	public boolean isContinueRecording() {
-		return continueRecording;
+	public boolean isRecording() {
+		return recording;
 	}
 
-	public void setLaughing(boolean continueRecording) {
-		this.continueRecording = continueRecording;
+	public void setRecording(boolean recording) {
+		this.recording = recording;
 	}
+
 
 	public ConcurrentLinkedQueue<TimedAudioBuffer> getAudioBufferQueue() {
 		return audioBufferQueue;
@@ -46,5 +52,15 @@ public class ThreadCommsManager {
 	public ConcurrentLinkedQueue<InterestingEvent> getInfluxMessageQueue() {
 		return influxMessageQueue;
 	}
+
+	public ConcurrentLinkedQueue<Date> getNoiseDetectionQueue() {
+		return noiseDetectionQueue;
+	}
+
+	public ConcurrentLinkedQueue<Transcription> getNlpMessageQueue() {
+		return nlpMessageQueue;
+	}
+
+
 	
 }

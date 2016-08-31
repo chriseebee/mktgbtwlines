@@ -1,8 +1,7 @@
 package uk.me.chriseebee.mktgbtwlines2;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import uk.me.chriseebee.mktgbtwlines.speech2text.ibm.App;
+import uk.me.chriseebee.mktgbtwlines.speech2text.Speech2TextClientThread;
 import uk.me.chriseebee.mktgbtwlines2.audio.AudioRecorder;
 import uk.me.chriseebee.mktgbtwlines2.audio.NoiseTrigger;
 
@@ -25,10 +24,16 @@ public class NewBlissApp {
 	    Thread t2 = new Thread (ar);
 	    
 		//
-		// 3. An NLP thread that consumes the responses from the speech 
+	    // 3. A speech recog API that picks up the chunks and processes
+	    //
+	    Speech2TextClientThread stct = new Speech2TextClientThread();
+	    Thread t3 = new Thread (stct);
+	    
+	    
+		// 4. An NLP thread that consumes the responses from the speech 
 		//    to text API, processes them and raises events if required
 		//
-		// 4. A thread that pushes the events to Influx DB from a Queue
+		// 5. A thread that pushes the events to Influx DB from a Queue
 		// 
 	
 		// Start the threads in reverse dependency order
