@@ -1,9 +1,10 @@
 package uk.me.chriseebee.mktgbtwlines2.audio;
 
+import java.io.Serializable;
 import java.util.Date;
 
 
-public class TimedAudioBuffer {
+public class TimedAudioBuffer implements Serializable {
 
 	  private static final int BYTES_PER_BUFFER = 3200; //buffer size in bytes
 	  // For LINEAR16 at 16000 Hz sample rate, 3200 bytes corresponds to 100 milliseconds of audio.

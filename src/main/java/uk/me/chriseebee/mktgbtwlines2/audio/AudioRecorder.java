@@ -58,12 +58,12 @@ public class AudioRecorder extends Thread {
 				try {
 					bytesRead = ais.read(buffer);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.error("Error reading from input stream",e1);
 				}
             	if (bytesRead>0) {
 	            	tab.setEndDateTime(new Date());
 	            	tab.setBuffer(buffer);
+	            	logger.info("Putting Audio Buffer on Queue");
 	            	ThreadCommsManager.getInstance().getAudioBufferQueue().add(tab);
             	} 
             	
@@ -78,8 +78,7 @@ public class AudioRecorder extends Thread {
         		try {
 					ais.skip(BYTES_PER_BUFFER);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error skipping forwards on input stream",e);
 				}
         	}
         }

@@ -1,5 +1,6 @@
 package uk.me.chriseebee.mktgbtwlines2.db;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
@@ -21,7 +22,12 @@ public class StorageListenerThread extends Thread {
         while ( running ) {
         	InterestingEvent ev = queue.poll();
             if (ev!=null) {
-            	influxClient.sendEventToInflux(ev);
+            	try {
+					influxClient.sendEventToInflux(ev);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
     }

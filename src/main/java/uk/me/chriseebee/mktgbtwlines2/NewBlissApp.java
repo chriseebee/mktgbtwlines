@@ -1,11 +1,16 @@
 package uk.me.chriseebee.mktgbtwlines2;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines.speech2text.Speech2TextClientThread;
 import uk.me.chriseebee.mktgbtwlines2.audio.AudioRecorder;
 import uk.me.chriseebee.mktgbtwlines2.audio.NoiseTrigger;
+import uk.me.chriseebee.mktgbtwlines2.nlp.NLPListenerThread;
 
 public class NewBlissApp {
+	
+	Logger logger = LoggerFactory.getLogger(NewBlissApp.class);
 
 	public NewBlissApp() {
 
@@ -32,7 +37,10 @@ public class NewBlissApp {
 	    
 		// 4. An NLP thread that consumes the responses from the speech 
 		//    to text API, processes them and raises events if required
-		//
+		
+	    NLPListenerThread nlplt = new NLPListenerThread();
+	    Thread t4 = new Thread (nlplt);
+	    
 		// 5. A thread that pushes the events to Influx DB from a Queue
 		// 
 	

@@ -5,9 +5,9 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
-
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
+
+import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
 
 
 public class NoiseTrigger extends Thread {
@@ -32,9 +32,10 @@ public class NoiseTrigger extends Thread {
 	          
 	                do{
 		                if (!ThreadCommsManager.getInstance().isRecording()) {
+		                	logger.info("Starting the Recorder via sending message on queue");
 		                	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(new Date());
 		                }
-	                	System.out.println(" Looping in recording mode. Volume = "+mic.getAudioVolume());
+	                	logger.info(" Looping in recording mode. Volume = "+mic.getAudioVolume());
 	                    Thread.sleep(1000);//Updates every second
 	                }
 	                while(mic.getAudioVolume() > THRESHOLD);

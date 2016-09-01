@@ -63,8 +63,8 @@ public class GoogleClientApp {
 			Date startDate = new Date();
 			System.out.println("Time = "+startDate.toString());
 			client.setup();
-			client.recognize(inputStream, new Date());
-			processResponse(client.getResponses());
+			client.recognize(inputStream, startDate);
+			processResponse(client.getResponses(),startDate);
 		} catch (IOException | InterruptedException e) {
 			logger.error("Google Streaming Input Stream Recognize Error",e);
 		} finally {

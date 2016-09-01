@@ -1,9 +1,5 @@
 package uk.me.chriseebee.mktgbtwlines.speech2text;
 
-import static org.junit.Assert.fail;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

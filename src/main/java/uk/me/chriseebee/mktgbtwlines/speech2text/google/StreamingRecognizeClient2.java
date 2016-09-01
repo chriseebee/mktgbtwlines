@@ -70,7 +70,7 @@ public class StreamingRecognizeClient2 {
   
   StreamingRecognitionConfig streamingConfig = null;
   RecognitionConfig config = null;
-  TextResponseManager trm = null;
+  //TextResponseManager trm = null;
 
  
   private List<StreamingRecognizeResponse> responses = new ArrayList<StreamingRecognizeResponse>();
@@ -99,7 +99,7 @@ public class StreamingRecognizeClient2 {
 	    this.file=null;
 	    this.samplingRate = samplingRate;
 	    this.channel = channel;
-	    trm = new TextResponseManager();
+	    //trm = new TextResponseManager();
 
 	    speechClient = SpeechGrpc.newStub(channel);
   }
@@ -133,19 +133,19 @@ public class StreamingRecognizeClient2 {
         new StreamObserver<StreamingRecognizeResponse>() {
           @Override
           public void onNext(StreamingRecognizeResponse response) {
-            //logger.info("Received response: " + TextFormat.printToString(response));
+           // logger.info("Received response: " + TextFormat.printToString(response));
             responses.add(response);
           }
 
           @Override
           public void onError(Throwable error) {
-            //logger.log(Level.WARN, "recognize failed: {0}", error);
+            logger.log(Level.WARN, "recognize failed: {0}", error);
             finishLatch.countDown();
           }
 
           @Override
           public void onCompleted() {
-            //logger.info("recognize completed.");
+            logger.info("recognize completed.");
             finishLatch.countDown();
           }
         };
@@ -163,6 +163,7 @@ public class StreamingRecognizeClient2 {
       // long durationInMillis = 1000 * getFrameLength() / getFormat().getFrameRate();
       
       while ((bytesRead = is.read(buffer)) != -1) {
+    	  //logger.info("..");
         totalBytes += bytesRead;
         StreamingRecognizeRequest request =StreamingRecognizeRequest.newBuilder()
                 .setAudioContent(ByteString.copyFrom(buffer, 0, bytesRead))

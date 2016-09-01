@@ -22,7 +22,7 @@ public class AppConfigTest {
 		AppConfig ac = null;
 		
 		try {
-			cl = ConfigLoader.getConfigLoader("/config.yml");
+			cl = ConfigLoader.getConfigLoader();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Major error in finding resource");

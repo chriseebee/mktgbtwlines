@@ -30,13 +30,13 @@ public class NLPPipeline {
 	 * @param chunk
 	 * @param dateTimeMsAsString - this is the time the recording was made in Milliseconds since epoch
 	 */
-	public void processText (String chunk, Date date) {
+	public void processText (Transcription transcription) {
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 		// create an empty Annotation just with the given text
-		Annotation document = new Annotation(chunk.toLowerCase());
+		Annotation document = new Annotation(transcription.getTranscriptionText());
 
 		// run all Annotators on this text
 		pipeline.annotate(document);
@@ -63,11 +63,11 @@ public class NLPPipeline {
 		    // init the interesting event
 		    if (ev==null) { 
 	    		ev = new InterestingEvent(); 
-	    		ev.setDateTime(date.getTime());
+	    		ev.setDateTime(transcription.getAudioStartDate().getTime());
 	    	}
 		    
 		    if (pos.startsWith("NN")) {
-		    	System.out.println("Word="+word+":"+pos);
+		    	logger.debug("Word="+word+":"+pos);
 		    	// So it's possible that this word is a single product or 
 		    	// brand, 
 		    	// It could also be part of a multiple word product/brand 

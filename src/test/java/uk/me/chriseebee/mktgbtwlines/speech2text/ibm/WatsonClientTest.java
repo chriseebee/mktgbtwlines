@@ -32,7 +32,10 @@ public class WatsonClientTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("BIG ERROR LOADING CONFIG");
+			return;
 		}
+		
+		//System.out.println(ac.getWatsonKeys().get("username") + "/" +ac.getWatsonKeys().get("password"));
 		
 		WatsonClient wc = new WatsonClient(
 				 ac.getWatsonKeys().get("username")
@@ -55,8 +58,7 @@ public class WatsonClientTest {
 				}
 			}
 		}
-		
-		fail("Not yet implemented");
+
 	}
 
 }

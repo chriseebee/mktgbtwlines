@@ -39,9 +39,6 @@ public class WatsonClient {
 		this.password = password;
 	}
 	
-	
-
-	
 	private void setup() {
 		
 	}
