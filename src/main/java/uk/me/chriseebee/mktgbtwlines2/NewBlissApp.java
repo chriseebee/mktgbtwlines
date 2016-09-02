@@ -44,11 +44,11 @@ public class NewBlissApp {
 	    
 		// 5. A thread that pushes the events to Influx DB from a Queue
 	    //
-	    StorageListenerThread slt = new StorageListenerThread();
-	    Thread t5 = new Thread (slt);
+	    //StorageListenerThread slt = new StorageListenerThread();
+	    //Thread t5 = new Thread (slt);
 	
 		// Start the threads in reverse dependency order
-	    t5.start();
+	    //t5.start();
 	    t4.start();
 	    t3.start();      
 	    t2.start();
