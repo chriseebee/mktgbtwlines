@@ -1,0 +1,14 @@
+influxParams:
+  hostname: XX
+  adminPort: NNNN
+  postPort: NNNN
+watsonKeys:
+  username: your_watson_username
+  password: your_watson_password
+googleKeys:
+  username: your_google_username
+  password: your_google_password
+witKeys:
+  bearerToken: your_wit_api_bearer_token
+audioOptions:
+  triggerThreshold: 20

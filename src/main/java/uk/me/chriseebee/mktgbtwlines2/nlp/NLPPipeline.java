@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ibm.watson.developer_cloud.alchemy.v1.model.Sentiment;
+
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -21,17 +23,21 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
+import uk.me.chriseebee.mktgbtwlines2.nlp.ibm.AlchemyClient;
 
 public class NLPPipeline {
 
 	Logger logger = LoggerFactory.getLogger(NLPPipeline.class);
 	Properties props = null;
 	StanfordCoreNLP pipeline = null;
+	AlchemyClient ac = null;
 	
 	public NLPPipeline() {
 		props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
+		//props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
+		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse, dcoref, sentiment");
 		pipeline = new StanfordCoreNLP(props);
+		ac = new AlchemyClient();
 	}
 	/**
 	 * 
@@ -51,13 +57,17 @@ public class NLPPipeline {
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 
 		List<String> consecutiveNouns = new ArrayList<String>();
-		String nounType = null;
+		//String nounType = null;
 		InterestingEvent ev = null;
 		
 		for(CoreMap sentence: sentences) {
 			System.out.println(sentence);
 		
-			String sentiment = sentence.get(SentimentCoreAnnotations.SentimentClass.class);
+			// This is the sentiment from Stanford
+			// String sentiment = sentence.get(SentimentCoreAnnotations.SentimentClass.class);
+			
+			Sentiment sentiment = null;
+			
 		  // traversing the words in the current sentence
 		  // a CoreLabel is a CoreMap with additional token-specific methods
 		  for (CoreLabel token: sentence.get(TokensAnnotation.class)) {
@@ -66,7 +76,7 @@ public class NLPPipeline {
 		    // this is the POS tag of the token
 		    String pos = token.get(PartOfSpeechAnnotation.class);
 		    // this is the NER label of the token
-		    String ne = token.get(NamedEntityTagAnnotation.class);
+		   // String ne = token.get(NamedEntityTagAnnotation.class);
 		    
 		    // init the interesting event
 		    if (ev==null) { 
@@ -103,14 +113,18 @@ public class NLPPipeline {
 	    				logger.info("Phrase="+phrase+", has been identified as "+nounType3);
 		    			ev.setIdentifiedEntity(phrase);
 		    			ev.setIdentifiedEntityType(nounType3);
-		    			ev.setSentiment(sentiment);
+		    				
+		    			if (sentiment != null ) { 
+			    			// This is the sentiment analysis from Watson which is better
+			    			sentiment = ac.getSentenceSentiment(sentence.toString());    				
+		    			}
+		    			
+		    			ev.setSentiment(sentiment.getType().name());
 		    			sendInterestingEventToStorage(ev);
 		    			consecutiveNouns.clear();
 	    			}
 		    	}
-
 		    	
-
 		    	//TODO	: Use better API to get this	    	
 //		    	if (pos.startsWith("JJ")) {
 //		    		ev.setAdjective(word);
@@ -122,10 +136,6 @@ public class NLPPipeline {
 //		    	}
 		    }
 	    
-		    
-		    
-	          
-	          
 		  }
 		}
 	}

@@ -1,11 +1,11 @@
-resources/
+/resources/
 target/
 src/main/resources/config.yml
 
 .metadata
 bin/
 tmp/
-libs/
+libs/**/*.jar
 *.tmp
 *.bak
 *.swp
