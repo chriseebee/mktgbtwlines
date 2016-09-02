@@ -21,8 +21,10 @@ public class NoiseTrigger extends Thread {
 	private void ambientListeningLoop() {
 	    MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
 	   // mic.setAudioFile(new File("AudioTestNow.flac"));
-	    while(true){
-	        mic.open();
+	    mic.open();
+	    boolean keepGoing = true;
+	    while(keepGoing){
+	       // mic.open();
 	        int volume = mic.getAudioVolume();
 	        boolean isSpeaking = (volume > THRESHOLD);
 	        System.out.print("."+volume);
@@ -35,7 +37,6 @@ public class NoiseTrigger extends Thread {
 		                	logger.info("Starting the Recorder via sending message on queue");
 		                	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(new Date());
 		                }
-	                	logger.info(" Looping in recording mode. Volume = "+mic.getAudioVolume());
 	                    Thread.sleep(1000);//Updates every second
 	                }
 	                while(mic.getAudioVolume() > THRESHOLD);
@@ -44,7 +45,7 @@ public class NoiseTrigger extends Thread {
 	           
 	            }
 	            finally{
-	                mic.close();//Makes sure microphone closes on exit.
+	             //   mic.close();//Makes sure microphone closes on exit.
 	            }
 	        }
 	        try {
@@ -53,6 +54,7 @@ public class NoiseTrigger extends Thread {
 				logger.error("Error Occured in thread sleep",e);
 			}//Updates every 0.1 second
 	    }
+	    mic.close();
 	}
 
     public void run() {

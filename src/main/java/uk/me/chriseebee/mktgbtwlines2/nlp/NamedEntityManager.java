@@ -76,11 +76,11 @@ public class NamedEntityManager {
 	public int getIndexOf(String type, String lookup) {
 		int returnVal = -1;
 		if (type.equals(PRODUCT_TYPE)) {
-			returnVal = products.indexOf(lookup);
+			returnVal = products.indexOf(lookup.toLowerCase());
 		}
 		
 		if (type.equals(BRAND_TYPE)) {
-			returnVal = brands.indexOf(lookup);
+			returnVal = brands.indexOf(lookup.toLowerCase());
 		}
 		
 		return returnVal;
@@ -88,11 +88,11 @@ public class NamedEntityManager {
 	
 	public String isWordRecognized(String lookup) {
 		// first lets check the brand list
-		if (brands.indexOf(lookup)>0) {
+		if (brands.indexOf(lookup.toLowerCase())>0) {
 			return BRAND_TYPE;
 		}
 		
-		if (products.indexOf(lookup)>0) {
+		if (products.indexOf(lookup.toLowerCase())>0) {
 			return PRODUCT_TYPE;
 		}
 		
@@ -102,14 +102,14 @@ public class NamedEntityManager {
 	public String isWordRecognized(String lookup, String nounType) {
 		// first lets check the brand list
 		if (nounType==null || nounType.equals(BRAND_TYPE)) {
-			if (brands.indexOf(lookup)>0) {
+			if (brands.indexOf(lookup.toLowerCase())>0) {
 				return BRAND_TYPE;
 			}
 		}
 		
 		if (nounType==null || nounType.equals(PRODUCT_TYPE)) {
 			logger.info("Testing "+lookup+" against the list");
-			int indx = products.indexOf(lookup);
+			int indx = products.indexOf(lookup.toLowerCase());
 			logger.info("Index is : "+indx);
 			if (indx>0) {
 				return PRODUCT_TYPE;	

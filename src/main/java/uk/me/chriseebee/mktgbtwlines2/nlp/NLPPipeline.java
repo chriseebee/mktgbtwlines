@@ -35,7 +35,7 @@ public class NLPPipeline {
 	public NLPPipeline() {
 		props = new Properties();
 		//props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
-		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse, dcoref, sentiment");
+		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
 		pipeline = new StanfordCoreNLP(props);
 		ac = new AlchemyClient();
 	}
@@ -45,7 +45,6 @@ public class NLPPipeline {
 	 * @param dateTimeMsAsString - this is the time the recording was made in Milliseconds since epoch
 	 */
 	public void processText (Transcription transcription) {
-
 
 		// create an empty Annotation just with the given text
 		Annotation document = new Annotation(transcription.getTranscriptionText());
@@ -84,12 +83,14 @@ public class NLPPipeline {
 	    		ev.setDateTime(transcription.getAudioStartDate().getTime());
 	    	}
 		    
+		    logger.debug("Word="+word+":"+pos);
+		    
 		    if (pos.startsWith("NN")) {
 		    	
 		    	// So it's possible that this word is a single product or 
 		    	// brand, 
 		    	// It could also be part of a multiple word product/brand 
-		    	String res = nem.isPhraseRecognized(word,null);
+		    	String res = nem.isWordRecognized(word,null);
 		    	if (res!=null) {
 		    		logger.info("Word="+word+":"+pos+", was recognized as a "+res);
 		    		consecutiveNouns.add(word);
@@ -114,7 +115,7 @@ public class NLPPipeline {
 		    			ev.setIdentifiedEntity(phrase);
 		    			ev.setIdentifiedEntityType(nounType3);
 		    				
-		    			if (sentiment != null ) { 
+		    			if (sentiment == null ) { 
 			    			// This is the sentiment analysis from Watson which is better
 			    			sentiment = ac.getSentenceSentiment(sentence.toString());    				
 		    			}
@@ -122,6 +123,7 @@ public class NLPPipeline {
 		    			ev.setSentiment(sentiment.getType().name());
 		    			sendInterestingEventToStorage(ev);
 		    			consecutiveNouns.clear();
+		    			sentiment=null;
 	    			}
 		    	}
 		    	

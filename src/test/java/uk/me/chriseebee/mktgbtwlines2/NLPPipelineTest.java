@@ -39,29 +39,29 @@ public class NLPPipelineTest {
 //		pipe.processText(t);
 //	}
 //	
-	@Test
-	public void testMainPipeline3a() {
-		NLPPipeline pipe = new NLPPipeline();
-		Transcription t = new Transcription
-		("I really love car manufacturers Audi as well as BMW and Alfa Romeo",new Date());
-		pipe.processText(t);
-	}
-	
-	@Test
-	public void testMainPipeline3b() {
-		NLPPipeline pipe = new NLPPipeline();
-		Transcription t = new Transcription
-		("Car manufacturers Audi as well as BMW and Alfa Romeo are amazing, i love them",new Date());
-		pipe.processText(t);
-	}
-	
 //	@Test
-//	public void testMainPipeline4() {
+//	public void testMainPipeline3a() {
 //		NLPPipeline pipe = new NLPPipeline();
 //		Transcription t = new Transcription
-//		("what is hard is that Gucci and Louis Vuitton a tricky names to capture",new Date());
+//		("I really love car manufacturers Audi as well as BMW and Alfa Romeo",new Date());
 //		pipe.processText(t);
 //	}
+//	
+//	@Test
+//	public void testMainPipeline3b() {
+//		NLPPipeline pipe = new NLPPipeline();
+//		Transcription t = new Transcription
+//		("Car manufacturers Audi as well as BMW and Alfa Romeo are amazing, i love them",new Date());
+//		pipe.processText(t);
+//	}
+	
+	@Test
+	public void testMainPipeline4() {
+		NLPPipeline pipe = new NLPPipeline();
+		Transcription t = new Transcription
+		("what is hard is that Gucci and Louis Vuitton a tricky names to capture",new Date());
+		pipe.processText(t);
+	}
 	
 //	@Test
 //	public void testMainPipeline5() {

@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
+import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
  
 /**
  * A sample program is to demonstrate how to record sound in Java
@@ -22,7 +24,7 @@ public class AudioRecorder extends Thread {
 	
     // record duration, in milliseconds
     //private static final long RECORD_TIME = 200000;  // 10 seconds 
-    private static final int BYTES_PER_BUFFER = 320000; //buffer size in bytes
+    private static final int BYTES_PER_BUFFER = 640000; //buffer size in bytes
 
     private volatile boolean running = true;
     
@@ -35,53 +37,61 @@ public class AudioRecorder extends Thread {
  
     // the line from which audio data is captured
     TargetDataLine line;
- 
-    //private DataLine.Info info =  null;
-    private AudioInputStream ais = null;
+    
+    private  ConcurrentLinkedQueue<Date> queue = null;
     
     public AudioRecorder() {
     	
     	au = new AudioUtils();
     	au.setupRecording();
+    	queue = ThreadCommsManager.getInstance().getNoiseDetectionQueue();
     }
 
     /**
      * Captures the sound and record into a WAV file
      */
     
+    private void record(Date date) {
+    	//if (ThreadCommsManager.getInstance().isRecording()) {
+        	TimedAudioBuffer tab = new TimedAudioBuffer(date);
+        	int bytesRead = 0;
+			try {
+				logger.info("Starting to record buffer");
+				bytesRead = au.getAudioInputStream().read(buffer);
+				logger.info("Finished record buffer");
+			} catch (IOException e1) {
+				logger.error("Error reading from input stream",e1);
+			}
+        	if (bytesRead>0) {
+            	tab.setEndDateTime(new Date());
+            	tab.setBuffer(buffer);
+            	logger.info("Putting Audio Buffer on Queue");
+            	ThreadCommsManager.getInstance().getAudioBufferQueue().add(tab);
+        	} 
+        	
+        	ThreadCommsManager.getInstance().setRecording(false);
+    	//} 
+//    	else {
+//    		try {
+//				ais.skip(BYTES_PER_BUFFER);
+//			} catch (IOException e) {
+//				logger.error("Error skipping forwards on input stream",e);
+//			}
+//    	}
+    }
+    
     public void run() {
-        while (running) {
-        	if (ThreadCommsManager.getInstance().isRecording()) {
-        		Date d = new Date();
-            	TimedAudioBuffer tab = new TimedAudioBuffer(d);
-            	int bytesRead = 0;
-				try {
-					bytesRead = ais.read(buffer);
-				} catch (IOException e1) {
-					logger.error("Error reading from input stream",e1);
-				}
-            	if (bytesRead>0) {
-	            	tab.setEndDateTime(new Date());
-	            	tab.setBuffer(buffer);
-	            	logger.info("Putting Audio Buffer on Queue");
-	            	ThreadCommsManager.getInstance().getAudioBufferQueue().add(tab);
-            	} 
-            	
-//        		try {
-//					Thread.sleep(10000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-            	ThreadCommsManager.getInstance().setRecording(false);
-        	} else {
-        		try {
-					ais.skip(BYTES_PER_BUFFER);
-				} catch (IOException e) {
-					logger.error("Error skipping forwards on input stream",e);
-				}
-        	}
-        }
+	    while ( running ) {
+	    	Date d = queue.poll();
+	    	if (d!=null) {
+	    		logger.info("Noise Detected: Audio Recorder about to record");
+		    	ThreadCommsManager.getInstance().setRecording(true);
+		        this.record(d);
+	    	}
+	    }
     } 
  
+    public void stopRunning() {
+    	this.running = false;
+    }    
 }

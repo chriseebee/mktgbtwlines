@@ -178,11 +178,11 @@ public class StreamingRecognizeClient2 {
       //logger.info("Sent " + totalBytes + " bytes from audio file: " + file);
     } catch (RuntimeException e) {
       // Cancel RPC.
-      e.printStackTrace();
+      logger.error("Runtime Exception in read from buffer",e);
       requestObserver.onError(e);
       throw e;
     } catch (Exception ee) {
-    	//logger.error(ee);
+    	logger.error("General Exception in read from buffer",ee);
     	throw ee;
     }
     

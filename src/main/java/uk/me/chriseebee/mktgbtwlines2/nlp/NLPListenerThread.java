@@ -26,8 +26,15 @@ public class NLPListenerThread extends Thread {
         while ( running ) {
         	Transcription transcription = queue.poll();
             if (transcription!=null) {
+            	logger.info("New NLP Request to Process");
             	nlpClient.processText(transcription);
             }
+            try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
     

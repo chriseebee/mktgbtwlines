@@ -66,5 +66,30 @@ public class InfluxClient {
         
     }
     
+    
+    public void sendEventToInflux(String text) throws IOException {
+        
+    	logger.info("Sending interesting event to Influx: "+text);
+    	
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+ 
+        // For POST only - START
+        con.setDoOutput(true);
+        OutputStream os = con.getOutputStream();
+        os.write(text.getBytes());
+        os.flush();
+        os.close();
+        // For POST only - END
+ 
+        int responseCode = con.getResponseCode();
+ 
+        if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
+        	logger.error("POST request to InfluxDB has not worked: "+responseCode);
+        } 
+        
+    }
+    
 
 }

@@ -44,6 +44,12 @@ public class Speech2TextClientThread extends Thread {
             	gca.processBuffer(tab);
             }
         }
+        try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void stopRunning() {

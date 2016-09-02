@@ -32,17 +32,11 @@ public class GoogleClientApp {
     Integer port = 443;
     Integer sampling = 16000;
 	
-    private TimedAudioBuffer tab =null;
-    ManagedChannel channel = null;
+    //private TimedAudioBuffer tab =null;
+    
     StreamingRecognizeClient2 client = null;
     
 	public GoogleClientApp() {  
-		try {
-			channel = AsyncRecognizeClient.createChannel(host, port);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public void processFile(File f) {
@@ -59,6 +53,7 @@ public class GoogleClientApp {
   
 	    logger.info("Starting to process new File");
 		try {
+			ManagedChannel channel = AsyncRecognizeClient.createChannel(host, port);
 			client = new StreamingRecognizeClient2(channel, sampling);
 			Date startDate = new Date();
 			System.out.println("Time = "+startDate.toString());
@@ -77,15 +72,15 @@ public class GoogleClientApp {
 	}
 	
 	
-	public void processBuffer(TimedAudioBuffer buffer) {
+	public void processBuffer(TimedAudioBuffer tab) {
 	    
 	    logger.info("Starting to process new Buffer");
 		try {
 			ByteArrayInputStream is = new  ByteArrayInputStream(tab.getBuffer());
 			//AudioInputStream ais = new AudioInputStream(is, AudioFormat.WAV,(long)16000);
+			ManagedChannel channel = AsyncRecognizeClient.createChannel(host, port);
 			client = new StreamingRecognizeClient2(channel, sampling);
-			Date startDate = new Date();
-			System.out.println("Time = "+startDate.toString());
+			Date startDate = new Date(tab.getStartDateTime());
 			client.setup();
 			client.recognize(is, startDate );
 			processResponse(client.getResponses(),startDate);
