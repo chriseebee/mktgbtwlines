@@ -6,11 +6,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 
 public class InfluxClient {
 
+	Logger logger = LoggerFactory.getLogger(InfluxClient.class);
+	
     private static final String USER_AGENT = "Mozilla/5.0";
     private static final String POST_URL = "http://SERVER:8086/write?db=newbliss";
 
@@ -23,24 +28,22 @@ public class InfluxClient {
 		try {
 			cl = ConfigLoader.getConfigLoader();
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("Failed to get Configuration",e1);
 		}
 		String influxHostname = cl.getConfig().getInfluxParams().get("hostname");
 		
     	try {
 			obj = new URL(POST_URL.replace("SERVER", influxHostname));
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Failed to get Server details for Influx",e);
 		}
 	}
 	
 	
     public void sendEventToInflux(InterestingEvent ev) throws IOException {
         
+    	logger.info("Sending interesting event to Influx: "+ev.toString());
 		java.util.Date date= new java.util.Date();
-		String ts = date.getTime()+"000000";
 		String message = ev.toString();
     	
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -58,7 +61,7 @@ public class InfluxClient {
         int responseCode = con.getResponseCode();
  
         if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
-        	System.out.println("POST request to InfluxDB has not worked: "+responseCode);
+        	logger.error("POST request to InfluxDB has not worked: "+responseCode);
         } 
         
     }

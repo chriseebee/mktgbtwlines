@@ -5,10 +5,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 
 
-public class NLPListenerThread {
+public class NLPListenerThread extends Thread {
 	
 	Logger logger = LoggerFactory.getLogger(NLPListenerThread.class);
 
@@ -33,4 +34,5 @@ public class NLPListenerThread {
     public void stopRunning() {
     	this.running = false;
     }    
+    
 }

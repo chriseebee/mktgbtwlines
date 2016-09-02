@@ -121,14 +121,14 @@ public class NamedEntityManager {
 	public String isPhraseRecognized(String lookup, String nounType) {
 		// first lets check the brand list
 		if (nounType==null || nounType.equals(BRAND_TYPE)) {
-			if (brandsFull.indexOf(lookup)>0) {
+			if (brandsFull.indexOf(lookup.toLowerCase())>0) {
 				return BRAND_TYPE;
 			}
 		}
 		
 		if (nounType==null || nounType.equals(PRODUCT_TYPE)) {
 			
-			if (productsFull.indexOf(lookup)>0) {
+			if (productsFull.indexOf(lookup.toLowerCase())>0) {
 				return PRODUCT_TYPE;
 			}
 		}

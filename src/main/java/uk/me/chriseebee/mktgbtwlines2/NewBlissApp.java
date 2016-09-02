@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import uk.me.chriseebee.mktgbtwlines.speech2text.Speech2TextClientThread;
 import uk.me.chriseebee.mktgbtwlines2.audio.AudioRecorder;
 import uk.me.chriseebee.mktgbtwlines2.audio.NoiseTrigger;
+import uk.me.chriseebee.mktgbtwlines2.db.StorageListenerThread;
 import uk.me.chriseebee.mktgbtwlines2.nlp.NLPListenerThread;
 
 public class NewBlissApp {
@@ -25,6 +26,7 @@ public class NewBlissApp {
 		//
 		// 2. A sound recorder thread that takes the sound and
 		//    chunks it up into 10s byte[] chunks to fire at the API
+	    //
 	    AudioRecorder ar = new AudioRecorder();
 	    Thread t2 = new Thread (ar);
 	    
@@ -34,18 +36,21 @@ public class NewBlissApp {
 	    Speech2TextClientThread stct = new Speech2TextClientThread();
 	    Thread t3 = new Thread (stct);
 	    
-	    
 		// 4. An NLP thread that consumes the responses from the speech 
 		//    to text API, processes them and raises events if required
-		
+		//
 	    NLPListenerThread nlplt = new NLPListenerThread();
 	    Thread t4 = new Thread (nlplt);
 	    
 		// 5. A thread that pushes the events to Influx DB from a Queue
-		// 
+	    //
+	    StorageListenerThread slt = new StorageListenerThread();
+	    Thread t5 = new Thread (slt);
 	
 		// Start the threads in reverse dependency order
-        
+	    t5.start();
+	    t4.start();
+	    t3.start();      
 	    t2.start();
 	    t1.start();
 	}

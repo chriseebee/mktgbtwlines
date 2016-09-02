@@ -5,6 +5,7 @@ src/main/resources/config.yml
 .metadata
 bin/
 tmp/
+libs/
 *.tmp
 *.bak
 *.swp
