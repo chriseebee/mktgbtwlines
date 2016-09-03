@@ -9,7 +9,7 @@ public class TestFilesSetup {
 	List<String> trascriptList = new ArrayList<String>();
 	
 	public TestFilesSetup() {
-		
+		 
 		fileNameList.add("brand_track_001.wav");
 		fileNameList.add("brand_track_002.wav");
 		fileNameList.add("brand_track_003.wav");

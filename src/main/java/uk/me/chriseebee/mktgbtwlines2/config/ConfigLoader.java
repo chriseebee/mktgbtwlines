@@ -41,7 +41,7 @@ public class ConfigLoader {
 			_singleton.loadConfig();
 		}
 		
-		return _singleton;
+		return _singleton; 
 	}
 	
 	

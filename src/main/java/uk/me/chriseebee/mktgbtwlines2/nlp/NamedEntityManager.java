@@ -116,7 +116,7 @@ public class NamedEntityManager {
 			if (brands.indexOf(lookup.toLowerCase())>0) {
 				return BRAND_TYPE;
 			}
-		}
+		} 
 		
 		if (nounType==null || nounType.equals(PRODUCT_TYPE)) {
 			logger.info("Testing "+lookup+" against the list");

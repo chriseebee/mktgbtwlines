@@ -23,7 +23,7 @@ public class Microphone implements Closeable{
      */
     public enum CaptureState {
         PROCESSING_AUDIO, STARTING_CAPTURE, CLOSED;
-    }
+    } 
 
     /**
      * Variable for enum

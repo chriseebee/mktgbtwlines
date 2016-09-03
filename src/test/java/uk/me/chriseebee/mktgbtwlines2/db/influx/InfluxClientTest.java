@@ -7,10 +7,8 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
-
 public class InfluxClientTest {
-
+ 
 //	@Test
 //	public void test() {
 //		InfluxClient ic = new InfluxClient();
@@ -37,8 +35,11 @@ public class InfluxClientTest {
 		// entity,type=B value=Louis\ Vuitton,sex=null,sentiment=Positive,intent=null,adjective=null 1472856193236000000
 		
 		try {
-			ic.sendEventToInflux("nerevent value=BBC 1472856144462000000");
-															
+			Date d = new Date();
+			//ic.sendEventToInflux("nerevent value=BBC "+d.getTime()+"000000");
+			//ic.sendEventToInflux("measurement value=12 "+d.getTime()+"000000");
+			ic.sendEventToInflux("entity,type=P value=food "+d.getTime()+"000000");
+											
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("Error");

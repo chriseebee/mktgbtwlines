@@ -16,7 +16,7 @@ public class InterestingEvent {
 	private String adjective;
 	private long   dateTime;
 	
-	public InterestingEvent() {
+	public InterestingEvent() { 
 		
 	}
 

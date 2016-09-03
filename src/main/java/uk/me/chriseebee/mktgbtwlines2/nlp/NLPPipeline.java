@@ -28,6 +28,7 @@ public class NLPPipeline {
 	Properties props = null;
 	StanfordCoreNLP pipeline = null;
 	AlchemyClient ac = null;
+	NamedEntityManager nem = null;
 	
 	public NLPPipeline() {
 		props = new Properties();
@@ -35,6 +36,7 @@ public class NLPPipeline {
 		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
 		pipeline = new StanfordCoreNLP(props);
 		ac = new AlchemyClient();
+		nem = new NamedEntityManager();
 	}
 	/**
 	 * 
@@ -49,7 +51,7 @@ public class NLPPipeline {
 		// run all Annotators on this text
 		pipeline.annotate(document);
 		
-		NamedEntityManager nem = new NamedEntityManager();
+		
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 
 		List<String> consecutiveNouns = new ArrayList<String>();
@@ -96,46 +98,46 @@ public class NLPPipeline {
 		    } else {
 		    	
 		    	if (consecutiveNouns.size()>0) {
-			    	// So the word is not a noun. 
-			    	// Are there any in the buffer that are so that we can finalise them?
-	
-	    			String[] nouns = new String[consecutiveNouns.size()];
-	    			nouns = consecutiveNouns.toArray(nouns);
-	    			String phrase = Arrays.stream(nouns).collect(Collectors.joining(" "));
-	    			// Now check if it exists in the brand list
-	    			logger.info("Phrase to test ="+phrase);
-	    			
-	    			String nounType3 = nem.isPhraseRecognized(phrase,null);
-	    			
-	    			if (nounType3!=null) {
-	    				logger.info("Phrase="+phrase+", has been identified as "+nounType3);
-		    			ev.setIdentifiedEntity(phrase);
-		    			ev.setIdentifiedEntityType(nounType3);
-		    				
-		    			if (sentiment == null ) { 
-			    			// This is the sentiment analysis from Watson which is better
-			    			sentiment = ac.getSentenceSentiment(sentence.toString());    				
-		    			}
-		    			
-		    			ev.setSentiment(sentiment.getType().name());
-		    			sendInterestingEventToStorage(ev);
-		    			consecutiveNouns.clear();
-		    			sentiment=null;
-	    			}
+		    		processPhrase(consecutiveNouns, ev,sentiment, sentence);
 		    	}
-		    	
-		    	//TODO	: Use better API to get this	    	
-//		    	if (pos.startsWith("JJ")) {
-//		    		ev.setAdjective(word);
-//		    	}
-
-		    	//TODO	: Use better API to get this		    	
-//		    	if (pos.startsWith("VB")) {
-//		    		ev.setIntent(word);
-//		    	}
 		    }
-	    
+		        
 		  }
+		  
+		  // End of loop - also check if the last words were nouns and therefore deserve processing
+	    	if (consecutiveNouns.size()>0) {
+	    		processPhrase(consecutiveNouns, ev,sentiment, sentence);
+	    	}
+	    	
+		}
+	}
+	
+	private void processPhrase(List<String> consecutiveNouns, InterestingEvent ev,Sentiment sentiment, CoreMap sentence) {
+    	// So the word is not a noun. 
+    	// Are there any in the buffer that are so that we can finalise them?
+
+		String[] nouns = new String[consecutiveNouns.size()];
+		nouns = consecutiveNouns.toArray(nouns);
+		String phrase = Arrays.stream(nouns).collect(Collectors.joining(" "));
+		// Now check if it exists in the brand list
+		logger.info("Phrase to test ="+phrase);
+		
+		String nounType3 = nem.isPhraseRecognized(phrase,null);
+		
+		if (nounType3!=null) {
+			logger.info("Phrase="+phrase+", has been identified as "+nounType3);
+			ev.setIdentifiedEntity(phrase);
+			ev.setIdentifiedEntityType(nounType3);
+				
+			if (sentiment == null ) { 
+    			// This is the sentiment analysis from Watson which is better
+    			sentiment = ac.getSentenceSentiment(sentence.toString());    				
+			}
+			
+			ev.setSentiment(sentiment.getType().name());
+			sendInterestingEventToStorage(ev);
+			consecutiveNouns.clear();
+			sentiment=null;
 		}
 	}
 	

@@ -18,7 +18,7 @@ public class TimedAudioBuffer implements Serializable {
 	public TimedAudioBuffer(Date startDateTime) {
 		this.startDateTime=startDateTime.getTime();
 	}
-
+ 
 	public byte[] getBuffer() {
 		return buffer;
 	}

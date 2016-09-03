@@ -18,6 +18,7 @@ public class AppConfig {
 	public Map<String, String> getWitKeys() {
 		return witKeys;
 	} 
+	
 	public void setWitKeys(Map<String, String> witKeys) {
 		this.witKeys = witKeys;
 	}

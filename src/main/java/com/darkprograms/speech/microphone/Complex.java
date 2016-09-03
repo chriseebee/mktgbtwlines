@@ -23,7 +23,7 @@ public class Complex {
     // create a new object with the given real and imaginary parts
     public Complex(double real, double imag) {
         re = real;
-        im = imag;
+        im = imag; 
     }
 
     // return a string representation of the invoking Complex object

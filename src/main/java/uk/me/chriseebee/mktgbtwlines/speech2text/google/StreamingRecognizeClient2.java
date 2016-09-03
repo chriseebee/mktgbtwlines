@@ -41,7 +41,7 @@ public class StreamingRecognizeClient2 {
 
   private static final int BYTES_PER_BUFFER = 3200; //buffer size in bytes
   private static final int BYTES_PER_SAMPLE = 2; //bytes per sample for LINEAR16
-
+ 
   private static final List<String> OAUTH2_SCOPES = Arrays.asList("https://www.googleapis.com/auth/cloud-platform");
   
   //FileInputStream in = new FileInputStream(new File(file));

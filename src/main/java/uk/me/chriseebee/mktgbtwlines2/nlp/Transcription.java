@@ -17,7 +17,6 @@ public class Transcription {
 		this.transcriptionText = transcriptionText;
 		this.audioStartDate = audioStartDate;
 	}
-	
 
 	public String getTranscriptionText() {
 		return transcriptionText;

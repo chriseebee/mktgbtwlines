@@ -17,7 +17,7 @@ public class MicrophoneAnalyzer extends Microphone {
 	 * Constructor
 	 */
 	public MicrophoneAnalyzer(){
-		super();
+		super(); 
 	}
 	
 	/**

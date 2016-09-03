@@ -20,7 +20,7 @@ public class InfluxClient {
     private static final String POST_URL = "http://SERVER:8086/write?db=newbliss";
 
     String influxHostname = "";
-    URL obj;
+    URL obj; 
     
 	public InfluxClient() {
 		//TODO: Replace ports with configuration calls
@@ -43,7 +43,6 @@ public class InfluxClient {
     public void sendEventToInflux(InterestingEvent ev) throws IOException {
         
     	logger.info("Sending interesting event to Influx: "+ev.toString());
-		java.util.Date date= new java.util.Date();
 		String message = ev.toString();
     	
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -59,6 +58,9 @@ public class InfluxClient {
         // For POST only - END
  
         int responseCode = con.getResponseCode();
+        
+        logger.info("message = "+con.getResponseMessage());
+        //logger.info("message: "+ con.getr);
  
         if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
         	logger.error("POST request to InfluxDB has not worked: "+responseCode);
