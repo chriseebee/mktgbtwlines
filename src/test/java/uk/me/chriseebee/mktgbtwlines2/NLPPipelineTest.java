@@ -1,6 +1,5 @@
 package uk.me.chriseebee.mktgbtwlines2;
 
-import static org.junit.Assert.*;
 
 import java.util.Date;
 

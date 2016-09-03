@@ -2,12 +2,6 @@ package uk.me.chriseebee.mktgbtwlines2;
 
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -24,25 +18,7 @@ public class TaxonomyTests {
 	 public void before() throws Exception {
 		 logger.info("Setting it up!");
     	tm = new NamedEntityManager();
-    	tm.loadTaxonomy();
 	 }
-
-	@Test
-	public void testListApproach() {
-		List<String> testProducts = null;
-		    	
-        try {
-            URI uri = this.getClass().getResource("testProducts.txt").toURI();
-            testProducts = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        int indx = testProducts.indexOf("jewellery");
-        
-        assertTrue(indx==3);
-		    	
-	}
     
     @Test
     public void testProductLoad()
@@ -55,7 +31,7 @@ public class TaxonomyTests {
     }
     
     @Test
-    public void testBrandLoad()
+    public void testBrandLoad() 
     {
     	int brandCount = tm.getBrandCount();
     	logger.info("Number of Brands = "+brandCount);

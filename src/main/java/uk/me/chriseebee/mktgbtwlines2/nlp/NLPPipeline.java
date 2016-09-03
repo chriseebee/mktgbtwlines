@@ -2,7 +2,6 @@ package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ibm.watson.developer_cloud.alchemy.v1.model.Sentiment;
 
-import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
@@ -20,7 +18,6 @@ import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 import uk.me.chriseebee.mktgbtwlines2.nlp.ibm.AlchemyClient;

@@ -1,6 +1,5 @@
 package uk.me.chriseebee.mktgbtwlines2.audio;
 
-import static org.junit.Assert.*;
 
 import org.junit.Test;
 
@@ -14,7 +13,7 @@ public class NoiseTriggerTest {
 	    Thread t2 = new Thread (nt);
 	    t2.start();
 	    try {
-			Thread.sleep(60000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

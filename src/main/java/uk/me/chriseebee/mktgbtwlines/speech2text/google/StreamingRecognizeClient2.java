@@ -1,8 +1,6 @@
 package uk.me.chriseebee.mktgbtwlines.speech2text.google;
 
 
-import static org.apache.log4j.ConsoleAppender.SYSTEM_OUT;
-
 import com.google.cloud.speech.v1beta1.RecognitionConfig;
 import com.google.cloud.speech.v1beta1.RecognitionConfig.AudioEncoding;
 import com.google.cloud.speech.v1beta1.SpeechGrpc;
@@ -10,27 +8,13 @@ import com.google.cloud.speech.v1beta1.StreamingRecognitionConfig;
 import com.google.cloud.speech.v1beta1.StreamingRecognizeRequest;
 import com.google.cloud.speech.v1beta1.StreamingRecognizeResponse;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.TextFormat;
 
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.SimpleLayout;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -46,9 +30,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class StreamingRecognizeClient2 {
 
-  private final String file;
+  //private final String file;
   private  int samplingRate = 16000;
-  private InputStream inputStream;
+  //private InputStream inputStream;
   private static final Logger logger = Logger.getLogger(StreamingRecognizeClient2.class.getName());
 
   private final ManagedChannel channel;
@@ -96,7 +80,7 @@ public class StreamingRecognizeClient2 {
 //  }
   
   public StreamingRecognizeClient2(ManagedChannel channel,int samplingRate) throws IOException {
-	    this.file=null;
+	   //this.file=null;
 	    this.samplingRate = samplingRate;
 	    this.channel = channel;
 	    //trm = new TextResponseManager();

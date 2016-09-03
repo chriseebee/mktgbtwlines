@@ -1,6 +1,5 @@
 package uk.me.chriseebee.mktgbtwlines2.storage;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

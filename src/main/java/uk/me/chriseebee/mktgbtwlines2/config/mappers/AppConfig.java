@@ -17,7 +17,7 @@ public class AppConfig {
 	}
 	public Map<String, String> getWitKeys() {
 		return witKeys;
-	}
+	} 
 	public void setWitKeys(Map<String, String> witKeys) {
 		this.witKeys = witKeys;
 	}
@@ -32,7 +32,7 @@ public class AppConfig {
 	}
 	public void setAudioOptions(Map<String, String> audioOptions) {
 		this.audioOptions = audioOptions;
-	}
+	} 
 	
 	
 	

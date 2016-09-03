@@ -2,22 +2,12 @@ package uk.me.chriseebee.mktgbtwlines.speech2text.ibm;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ibm.watson.developer_cloud.alchemy.v1.model.Sentiment;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.Transcript;
-
-import uk.me.chriseebee.mktgbtwlines.speech2text.TestFilesSetup;
-import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
-import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
 import uk.me.chriseebee.mktgbtwlines2.nlp.ibm.AlchemyClient;
 
 public class WatsonClientTest {

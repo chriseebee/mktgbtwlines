@@ -42,7 +42,11 @@ Influx is used to store events in a time series manner when the service detects 
 
 There is some code in this service to run CMU Sphinx. The intention is in future to try and remove reliance on external speech to text, but we'll see...
 
+# Install
 
+1. Clone the repository
+2. Update the config.yml in the /usr/main/resources folder to incorporate your keys for the above services
+3. Run mvn install
 
 # Limitations
 

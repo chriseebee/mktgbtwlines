@@ -1,13 +1,14 @@
 package uk.me.chriseebee.mktgbtwlines2.nlp;
 
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class NamedEntityManager {
 	
@@ -22,50 +23,60 @@ public class NamedEntityManager {
 	private static String PRODUCTS_FULL = "/ner_products_full_name.txt";
 	private static String BRANDS_FULL = "/ner_brands_full_name.txt";
 	
-	List<String> products;
-	List<String> brands;
-	List<String> productsFull;
-	List<String> brandsFull;
+	private List<String> products = new ArrayList<String>();;
+	private List<String> brands = new ArrayList<String>();;
+	private List<String> productsFull = new ArrayList<String>();;
+	private List<String> brandsFull = new ArrayList<String>();;
 	
 
 	public NamedEntityManager() {
-		loadTaxonomy();
+		getLines(PRODUCTS, products);
+		getLines(PRODUCTS_FULL, productsFull);
+		getLines(BRANDS, brands);
+		getLines(BRANDS_FULL, brandsFull);
+		
+		 logger.info("Product Count = "+products.size() );
 	}
 	
-	public void loadTaxonomy() {
+	private void getLines(String resourceName, List<String> list) {
 
-        try {
-            URI uri = this.getClass().getResource(PRODUCTS).toURI();
-            products = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
-        } catch (Exception e) {
-        	logger.error("Could not load Products File",e);
-        }
-        
-        try {
-            URI uri = this.getClass().getResource(PRODUCTS_FULL).toURI();
-            productsFull = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
-        } catch (Exception e) {
-        	logger.error("Could not load Products Full File",e);
-        }
-        
-        try {
-            URI uri = this.getClass().getResource(BRANDS).toURI();
-            brands = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
-        } catch (Exception e) {
-        	logger.error("Could not load Brands File",e);
-        }
-        
-        try {
-            URI uri = this.getClass().getResource(BRANDS_FULL).toURI();
-            brandsFull = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
-        } catch (Exception e) {
-        	logger.error("Could not load Brands Full File",e);
-        }
+		BufferedReader r = new BufferedReader(new InputStreamReader((NamedEntityManager.class.getResourceAsStream(resourceName))));
 
+	    String inLine; //Buffer to store the current line
+	    try {
+			while ((inLine = r.readLine()) != null) //Read line-by-line, until end of file
+			{
+				//logger.info("Adding" + inLine);
+			    list.add(inLine);
+			}
+		} catch (IOException e) {
+			logger.error("Could not load  File",e);
+		}
+	    try {
+			r.close();
+		} catch (IOException e) {
+			logger.error("Could not load  File",e);
+		} 
+	    
+	   
 	}
+	
+//	public void loadTaxonomy() {
+
+
+		
+//        try {
+//            URI uri = this.getClass().getResource(PRODUCTS).toURI();
+//            products = Files.readAllLines(Paths.get(uri),Charset.defaultCharset());
+//        } catch (Exception e) {
+//        	logger.error("Could not load Products File",e);
+//        }
+//        
+
+//	}
 	
 	public int getProductCount() {
-		return products.size();
+		return products.size(); 
 	}
 	
 	
@@ -134,4 +145,5 @@ public class NamedEntityManager {
 		}
 		return null;
 	}
+	
 }

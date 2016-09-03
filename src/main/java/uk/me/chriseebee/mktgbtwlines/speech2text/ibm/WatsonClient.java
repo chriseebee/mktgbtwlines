@@ -39,15 +39,11 @@ public class WatsonClient {
 		this.password = password;
 	}
 	
-	private void setup() {
-		
-	}
-	
 	public void processBuffers() {
 		 SpeechToText service = new SpeechToText();
 		 service.setUsernameAndPassword(username, password);
 		    	
-		    ServiceCall<SpeechSession> session = service.createSession(SpeechModel.EN_UK_BROADBANDMODEL);
+		//    ServiceCall<SpeechSession> session = service.createSession(SpeechModel.EN_UK_BROADBANDMODEL);
 
 		    // Signed PCM AudioFormat with 16kHz, 16 bit sample size, mono
 		    int sampleRate = 16000;
@@ -134,7 +130,7 @@ public class WatsonClient {
 		      .build();
 
 		    int listenLoop = 0;
-		    boolean keepGoing = true;
+		    //boolean keepGoing = true;
 	    	while(listenLoop < 20) {
 	    		
 

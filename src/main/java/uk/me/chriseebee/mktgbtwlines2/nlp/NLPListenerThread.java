@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 
 

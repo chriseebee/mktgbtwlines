@@ -8,12 +8,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.me.chriseebee.mktgbtwlines2.TaxonomyTests;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 
 public class AppConfigTest {
 
-	Logger logger = LoggerFactory.getLogger(TaxonomyTests.class);
+	Logger logger = LoggerFactory.getLogger(AppConfigTest.class);
 	
 	@Test
 	public void test() {
@@ -37,7 +36,7 @@ public class AppConfigTest {
 		
 		Map<String,String> influxParams = ac.getInfluxParams();
 		
-		assertTrue(influxParams.get("hostname").equals("ec2-52-210-133-236.eu-west-1.compute.amazonaws.com"));
+		assertTrue(!influxParams.get("hostname").equals("XXX"));
 		
 	}
 

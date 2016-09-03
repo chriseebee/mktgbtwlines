@@ -8,8 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,7 +15,6 @@ import java.util.List;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import uk.me.chriseebee.mktgbtwlines.speech2text.TestFilesSetup;
 
@@ -28,7 +25,7 @@ import com.google.cloud.speech.v1beta1.StreamingRecognizeResponse;
 
 public class GoogleClientAppTest {
 
-	  org.slf4j.Logger logger = LoggerFactory.getLogger(GoogleClientAppTest.class);
+	  Logger logger = LoggerFactory.getLogger(GoogleClientAppTest.class);
 	  
 	  private List<String> transcriptList = new ArrayList<String>();
 	  
