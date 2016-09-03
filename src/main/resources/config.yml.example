@@ -3,8 +3,9 @@ influxParams:
   adminPort: NNNN
   postPort: NNNN
 watsonKeys:
-  username: your_watson_username
-  password: your_watson_password
+  username: your_watson_username_for_speech_api
+  password: your_watson_password_for_speech_api
+  apiKey: your_alchemy_language_API_key
 googleKeys:
   username: your_google_username
   password: your_google_password

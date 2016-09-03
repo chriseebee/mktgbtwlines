@@ -22,6 +22,26 @@ Make sure you download the models for Stanford NLP: http://stanfordnlp.github.io
 Select the English models file, download it (it's big) and save it to the ${project.dir}/lib folder	
 
 
+### Google Speech API
+
+This service uses the Google Speech API v1 to translate audio to speech. Please see [this page](https://github.com/chriseebee/mktgbtwlines/wiki/The-Google-Speech-API) for more details: 
+
+### IBM Watson Speech Service
+
+There is code in the project to also use the Watson Speech API (only at unit test level right now). If you want to test this, you will need a username and password for a registered Speech API on Bluemix
+
+### IBM Alchemy Language API
+
+I tried the Stanford semantic annotator and found it to be nowhere near as accurate as the Alchemy Language API. Again, you will need this API and an associated API key setup in your Bluemix environment.
+
+### Influx DB
+
+Influx is used to store events in a time series manner when the service detects any event that makes sense to trap. RIGHT NOW THIS IS COMMENTED OUT AS NOT WORKING
+
+### CMUSphinx
+
+There is some code in this service to run CMU Sphinx. The intention is in future to try and remove reliance on external speech to text, but we'll see...
+
 
 
 # Limitations
