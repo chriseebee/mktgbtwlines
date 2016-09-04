@@ -19,7 +19,6 @@ public class NoiseTriggerTest {
 			e.printStackTrace();
 		}
 	    nt.stopRunning();
-		//fail("Not yet implemented");
 	}
 
 }

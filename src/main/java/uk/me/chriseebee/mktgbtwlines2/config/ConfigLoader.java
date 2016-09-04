@@ -2,6 +2,7 @@ package uk.me.chriseebee.mktgbtwlines2.config;
 
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -19,13 +20,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class ConfigLoader {
 
-	private static final String DEFAULT_CONFIG_FILE = "/config.yml";
+	private static final String DEFAULT_CONFIG_FILE = "config.yml";
 	Logger logger = LoggerFactory.getLogger(ConfigLoader.class);
 	String resourceName = null;
 	AppConfig config;
 	
 	private static ConfigLoader _singleton = null;
-	
+	 
 	public static ConfigLoader getConfigLoader() throws Exception {
 		if (_singleton==null) {
 			_singleton = new ConfigLoader(DEFAULT_CONFIG_FILE);
@@ -58,7 +59,7 @@ public class ConfigLoader {
 	private void loadConfig() throws Exception {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		try {
-			Reader r = new InputStreamReader(ConfigLoader.class.getResourceAsStream(resourceName));
+			Reader r = new FileReader(new File(resourceName));
 			config = mapper.readValue(r, AppConfig.class);
 		} catch (JsonParseException e) {
 			logger.error("Error loading application configuration",e);

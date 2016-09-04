@@ -9,6 +9,9 @@ import uk.me.chriseebee.mktgbtwlines2.nlp.NLPPipeline;
 import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 
 public class NLPPipelineTest {
+	
+
+	
 
 	@Test
 	public void testMainPipeline0() {
@@ -19,7 +22,6 @@ public class NLPPipelineTest {
 				"producing a list of products and brands is quite hard. why do humans have to speak in such complicated ways. under what circumstances is it acceptable to punch your developers. a lot of people ask me about my expensive cars and jeWEllery"
 				,new Date());
 		pipe.processText(t);
-
 	}
 	
 	@Test
@@ -87,5 +89,12 @@ public class NLPPipelineTest {
 		pipe.processText(t);
 	}
 
-
+	@Test
+	public void testMainPipeline7() {
+		NLPPipeline pipe = new NLPPipeline();
+		Transcription t = new Transcription
+		("I'm not sure about Starbucks coffee",new Date());
+		pipe.processText(t);
+	}
+	
 }

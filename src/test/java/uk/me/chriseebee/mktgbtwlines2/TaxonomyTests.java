@@ -2,6 +2,8 @@ package uk.me.chriseebee.mktgbtwlines2;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -20,6 +22,16 @@ public class TaxonomyTests {
     	tm = new NamedEntityManager();
 	 }
     
+    @Test
+    public void testIntentLoad()
+    {
+    
+    	List<String> intents = tm.getIntents();
+    	int idx = intents.indexOf("love");
+
+        assertTrue( idx>0 );
+    }
+	 
     @Test
     public void testProductLoad()
     {
@@ -52,13 +64,5 @@ public class TaxonomyTests {
     }
     
     
-    
-    
-//    @After // tearDown()
-//    public void after() throws Exception {
-//    	System.out.println("Running: tearDown");
-//    	dummyAccount = null;
-//    	assertNull(dummyAccount);
-//    }
 
 }

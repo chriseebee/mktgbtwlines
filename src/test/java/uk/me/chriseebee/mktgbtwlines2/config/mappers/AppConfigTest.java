@@ -21,7 +21,7 @@ public class AppConfigTest {
 		AppConfig ac = null;
 		
 		try {
-			cl = ConfigLoader.getConfigLoader();
+			cl = ConfigLoader.getConfigLoader("config.yml");
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Major error in finding resource");
@@ -35,7 +35,7 @@ public class AppConfigTest {
 		}
 		
 		Map<String,String> influxParams = ac.getInfluxParams();
-		
+		logger.info("Hostname = "+influxParams.get("hostname"));
 		assertTrue(!influxParams.get("hostname").equals("XXX"));
 		
 	}

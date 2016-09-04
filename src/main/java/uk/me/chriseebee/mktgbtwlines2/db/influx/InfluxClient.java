@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,8 @@ public class InfluxClient {
     private static final String POST_URL = "http://SERVER:8086/write?db=newbliss";
 
     String influxHostname = "";
+    String username = null;
+    String password = null;
     URL obj; 
     
 	public InfluxClient() {
@@ -30,7 +33,9 @@ public class InfluxClient {
 		} catch (Exception e1) {
 			logger.error("Failed to get Configuration",e1);
 		}
-		String influxHostname = cl.getConfig().getInfluxParams().get("hostname");
+		influxHostname = cl.getConfig().getInfluxParams().get("hostname");
+		username = cl.getConfig().getInfluxParams().get("username");
+		password = cl.getConfig().getInfluxParams().get("password");
 		
     	try {
 			obj = new URL(POST_URL.replace("SERVER", influxHostname));
@@ -48,6 +53,14 @@ public class InfluxClient {
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", USER_AGENT);
+        
+        String authStr = username+":"+password;
+
+     // encode data on your side using BASE64
+        byte[] bytesEncoded = Base64.encodeBase64(authStr .getBytes());
+        String authEncoded = new String(bytesEncoded);
+        
+        con.setRequestProperty("Authorization", "Basic "+authEncoded);
  
         // For POST only - START
         con.setDoOutput(true);
@@ -76,6 +89,14 @@ public class InfluxClient {
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", USER_AGENT);
+        
+        String authStr = username+":"+password;
+
+     // encode data on your side using BASE64
+        byte[] bytesEncoded = Base64.encodeBase64(authStr .getBytes());
+        String authEncoded = new String(bytesEncoded);
+
+        con.setRequestProperty("Authorization", "Basic "+authEncoded);
  
         // For POST only - START
         con.setDoOutput(true);
@@ -84,6 +105,8 @@ public class InfluxClient {
         os.flush();
         os.close();
         // For POST only - END
+        
+        logger.info("message = "+con.getResponseMessage());
  
         int responseCode = con.getResponseCode();
  

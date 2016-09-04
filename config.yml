@@ -1,0 +1,15 @@
+influxParams:
+  hostname: ec2-52-210-133-236.eu-west-1.compute.amazonaws.com
+  adminPort: 8083
+  postPort: 8086
+  username: apiuser1
+  password: wonderful9z
+watsonKeys:
+  username: d0a6414d-0694-4710-ad9c-b195aa88e7f7
+  password: h4vad4oKV7SS
+  apiKey: 018b9d8ee5b23ee18135941d1b1c508c3a93de62
+witKeys:
+  bearerToken: AE4KPELX3MUNH5A2KPIAB2ZZIBBQNSOP
+audioOptions:
+  triggerThreshold: 20
+  whichService: GOOGLE

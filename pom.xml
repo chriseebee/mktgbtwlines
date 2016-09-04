@@ -13,7 +13,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jackson.version>2.8.1</jackson.version>
-    <tcnative.classifier>osx-x86_64</tcnative.classifier>
+   <tcnative.classifier>${os.detected.classifier}</tcnative.classifier> 
   </properties>
   
    <repositories>
@@ -113,7 +113,11 @@
     <artifactId>stanford-corenlp</artifactId>
     <version>3.6.0</version>
 </dependency>
-
+<dependency>
+    <groupId>commons-codec</groupId>
+    <artifactId>commons-codec</artifactId>
+    <version>1.10</version>
+</dependency>
 <dependency>
     <groupId>stanford</groupId>
     <artifactId>stanford-english-corenlp</artifactId>
@@ -143,6 +147,13 @@
   </dependencies>
   
   <build>
+      <extensions>
+      <extension>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.4.0.Final</version>
+      </extension>
+    </extensions>
   <plugins>
 
       <plugin>

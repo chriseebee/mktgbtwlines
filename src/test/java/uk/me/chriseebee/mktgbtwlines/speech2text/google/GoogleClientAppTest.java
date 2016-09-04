@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,8 +26,7 @@ public class GoogleClientAppTest {
 
 	  Logger logger = LoggerFactory.getLogger(GoogleClientAppTest.class);
 	  
-	  private List<String> transcriptList = new ArrayList<String>();
-	  
+	  //private List<String> transcriptList = new ArrayList<String>();
 	
 	  @Test
 	  public void testFiles() throws InterruptedException, IOException {

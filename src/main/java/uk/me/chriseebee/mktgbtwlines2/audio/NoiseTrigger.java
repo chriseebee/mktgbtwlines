@@ -34,7 +34,7 @@ public class NoiseTrigger extends Thread {
 	          
 	                do{
 		                if (!ThreadCommsManager.getInstance().isRecording()) {
-		                	logger.info("Starting the Recorder via sending message on queue");
+		                	logger.info("Starting the Recorder by sending message to queue");
 		                	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(new Date());
 		                }
 	                    Thread.sleep(1000);//Updates every second
