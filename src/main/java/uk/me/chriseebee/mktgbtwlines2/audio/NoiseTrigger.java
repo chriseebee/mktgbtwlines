@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
+import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
+import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
 
 import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
 
@@ -15,15 +17,27 @@ public class NoiseTrigger extends Thread {
 	Logger logger = LoggerFactory.getLogger(NoiseTrigger.class);
 	
     private volatile boolean running = true;
-    final int THRESHOLD = 20;
+    private int THRESHOLD = 20;
 
+    public NoiseTrigger() {
+		AppConfig ac = null; 
+		try {
+			ConfigLoader cl = ConfigLoader.getConfigLoader();
+			ac = cl.getConfig();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("BIG ERROR LOADING CONFIG",e);
+		}
+		
+		THRESHOLD = new Integer(ac.getAudioOptions().get("triggerThreshold")).intValue();
+    	
+    }
 	
 	private void ambientListeningLoop() {
 	    MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
 	   // mic.setAudioFile(new File("AudioTestNow.flac"));
 	    mic.open();
-	    boolean keepGoing = true;
-	    while(keepGoing){
+	    while(running){
 	       // mic.open();
 	        int volume = mic.getAudioVolume();
 	        boolean isSpeaking = (volume > THRESHOLD);
