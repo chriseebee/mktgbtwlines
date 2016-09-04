@@ -54,3 +54,12 @@ There is some code in this service to run CMU Sphinx. The intention is in future
 2. I have some issues with my POM which means I have had to hardcode the netty architecture to Mac OSX 64. - [Issue](https://github.com/chriseebee/mktgbtwlines/issues/2)
 3. I have not created Windows specific shell scripts as yet. So, Mac and Linux only I'm afraid - [Issue](https://github.com/chriseebee/mktgbtwlines/issues/3)
 
+# Health Warning
+
+I have written this code in a short space of time and it is by no means good. I know there are issues galore in it. 
+However, the objective to get to this stage was to use the process of development to explore the challenges in this space and discover new ways of thinking.
+
+The code can and will improve!
+
+
+

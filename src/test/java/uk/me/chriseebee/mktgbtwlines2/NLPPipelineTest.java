@@ -9,9 +9,6 @@ import uk.me.chriseebee.mktgbtwlines2.nlp.NLPPipeline;
 import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 
 public class NLPPipelineTest {
-	
-
-	
 
 	@Test
 	public void testMainPipeline0() {
@@ -94,6 +91,14 @@ public class NLPPipelineTest {
 		NLPPipeline pipe = new NLPPipeline();
 		Transcription t = new Transcription
 		("I'm not sure about Starbucks coffee",new Date());
+		pipe.processText(t);
+	}
+	
+	@Test
+	public void testMainPipeline8() {
+		NLPPipeline pipe = new NLPPipeline();
+		Transcription t = new Transcription
+		("Sony Televisions have always been my preference over bang and olufsen, Panasonic and Philips",new Date());
 		pipe.processText(t);
 	}
 	
