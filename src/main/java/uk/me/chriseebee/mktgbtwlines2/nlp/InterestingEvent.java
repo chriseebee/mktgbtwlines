@@ -1,5 +1,7 @@
 package uk.me.chriseebee.mktgbtwlines2.nlp;
 
+import java.util.Random;
+
 public class InterestingEvent {
 
 	public static final String MALE = "M";
@@ -46,7 +48,8 @@ public class InterestingEvent {
 	 * overrides the default toString with the format required for Influx
 	 */
 	public String toString() {
-		return "entity,type="+identifiedEntityType+" value=\""+identifiedEntity+"\",sentiment="+sentiment+",intent=\""+intent+"\" "+dateTime+"000000";
+		int rand = (new Random()).nextInt(900000) + 100000;
+		return "entity,type="+identifiedEntityType+" value=\""+identifiedEntity+"\",sentiment="+sentiment+",intent=\""+intent+"\" "+dateTime+""+rand;
 	}
  
 	public String getIdentifiedEntityType() {

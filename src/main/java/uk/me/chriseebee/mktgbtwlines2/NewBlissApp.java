@@ -111,7 +111,7 @@ public class NewBlissApp {
 	    } 
     	
     	System.out.println("---------------------------------------");
-    	System.out.println("----- APPLICATION SHUTTING DOWN -------");
+    	System.out.println("------- APPLICATION STARTED -----------");
     	System.out.println("---------------------------------------");
 	    
     }
