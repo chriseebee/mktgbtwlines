@@ -64,8 +64,26 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version:'4.12'
 }
 
+task testGoogleCredsEnv << {
+  if (!System.getenv("GOOGLE_APPLICATION_CREDENTIALS")) {
+  	
+  	throw new GradleException("You must have your ENV variable GOOGLE_APPLICATION_CREDENTIALS set for Google Credentials!") 
+   
+  } else {
+  
+    if (!project.file(System.getenv("GOOGLE_APPLICATION_CREDENTIALS")).exists()) { 
+		throw new GradleException("The Google Credentials file referenced in the ENV var does not exist")
+	} else {
+		println "Env is setup OK";
+	}
+
+  }
+}
+
+
+
 // NOT TESTED
-task downloadFile << {
+task downloadStanfordNlpJar << {
 println "Downloading Stanford API";
   if (!project.file('libs/'+nlpJarName).exists()) { 
 	download {
@@ -85,7 +103,16 @@ task downloadGoogleSpeech << {
 	exec {
 		workingDir '../'
 	    commandLine 'git','clone','https://github.com/GoogleCloudPlatform/java-docs-samples.git'
+	    ignoreExitValue true
 	    standardOutput = stdout;
+
+	    if(execResult == 0) {
+	       println "SUCCESS";
+	    } else {
+	       println "FAIL";
+	       throw new GradleException("Could Not Download Google Speech Client")
+	    }
+		
 	}
 	println "Output:\n$stdout";
  } else {
@@ -113,13 +140,19 @@ task copyGoogleJar(type: Copy) << {
 }
 
 
-task setup (dependsOn: 'setup1') << {
+task setup << {
  
   println "Setup Starting";
   
+  if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    throw new GradleException("This build must be run with java 8")
+  }
   
-  	downloadGoogleSpeech.execute() 
-
+  testGoogleCredsEnv.execute()
+  downloadGoogleSpeech.execute() 
+  installGoogleSpeech.execute() 
+  copyGoogleJar.execute() 
+  downloadStanfordNlpJar.execute()
   
   println "Setup Complete";
 }
