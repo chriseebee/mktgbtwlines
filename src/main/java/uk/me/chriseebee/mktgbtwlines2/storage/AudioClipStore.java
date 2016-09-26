@@ -1,11 +1,15 @@
 package uk.me.chriseebee.mktgbtwlines2.storage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
@@ -26,61 +30,81 @@ import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
 public class AudioClipStore {
 	
 	private static final String dataDirName = "data_files";
-	private static NavigableSet<Long> fileLongDates = new TreeSet<Long>();
+	private static NavigableMap<Long, TimedAudioBuffer> fileMap = new TreeMap<Long,TimedAudioBuffer>();
 
-	
-	public AudioClipStore() {
-		
+	public void put (TimedAudioBuffer tab) {
+		fileMap.put(tab.getStartDateTime(), tab);
 	}
 	
-	public TimedAudioBuffer getAudioBufferNearestTime(long time) {
-		TimedAudioBuffer tab  = null;
-		try {
+	
+	// make sure that the caller adds an extra chunk to the endTime
+	// otherwise it might truncate
+	public TimedAudioBuffer get (long startTime, long endTime) {
+		
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+		TimedAudioBuffer t1 = new TimedAudioBuffer (startTime);
+		t1.setEndDateTime(endTime);
+		Collection<TimedAudioBuffer> tabs = fileMap.subMap(startTime, endTime).values();
+		for (TimedAudioBuffer tab : tabs) {
 			try {
-				tab = (TimedAudioBuffer) deserialize(time+".tab");
-				return tab;
+				outputStream.write(tab.getBuffer());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
-		return tab;
-		
+		t1.setBuffer(outputStream.toByteArray());
+		return t1;
 	}
+//	
+//	public TimedAudioBuffer getAudioBufferNearestTime(long time) {
+//		TimedAudioBuffer tab  = null;
+//		try {
+//			try {
+//				tab = (TimedAudioBuffer) deserialize(time+".tab");
+//				return tab;
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		return tab;
+//		
+//	}
 	
-	public void storeAudioBuffer(TimedAudioBuffer tab) {
-
-		try {
-			serialize(tab, tab.getStartDateTime()+".tab");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public void storeAudioBuffer(TimedAudioBuffer tab) {
+//
+//		try {
+//			serialize(tab, tab.getStartDateTime()+".tab");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
-	// deserialize to Object from given file
-	private Object deserialize(String fileName) throws IOException,
-			ClassNotFoundException {
-		FileInputStream fis = new FileInputStream(fileName);
-		ObjectInputStream ois = new ObjectInputStream(fis);
-		Object obj = ois.readObject();
-		ois.close();
-		return obj;
-	}
-
-	// serialize the given object and save it to file
-	private void serialize(Object obj, String fileName)
-			throws IOException {
-		FileOutputStream fos = new FileOutputStream(fileName);
-		ObjectOutputStream oos = new ObjectOutputStream(fos);
-		oos.writeObject(obj);
-
-		fos.close();
-	}
+//	// deserialize to Object from given file
+//	private Object deserialize(String fileName) throws IOException,
+//			ClassNotFoundException {
+//		FileInputStream fis = new FileInputStream(fileName);
+//		ObjectInputStream ois = new ObjectInputStream(fis);
+//		Object obj = ois.readObject();
+//		ois.close();
+//		return obj;
+//	}
+//
+//	// serialize the given object and save it to file
+//	private void serialize(Object obj, String fileName)
+//			throws IOException {
+//		FileOutputStream fos = new FileOutputStream(fileName);
+//		ObjectOutputStream oos = new ObjectOutputStream(fos);
+//		oos.writeObject(obj);
+//
+//		fos.close();
+//	}
 
 	
 }

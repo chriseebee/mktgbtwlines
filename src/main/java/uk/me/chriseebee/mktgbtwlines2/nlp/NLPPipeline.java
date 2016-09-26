@@ -33,7 +33,7 @@ public class NLPPipeline {
 	public NLPPipeline() {
 		props = new Properties();
 		//props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref, sentiment");
-		props.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
+		props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse");
 		pipeline = new StanfordCoreNLP(props);
 		ac = new AlchemyClient();
 		nem = new NamedEntityManager();

@@ -28,9 +28,10 @@ public class ThreadCommsManager {
 		return _instance;
 	}
 	
-	private ConcurrentLinkedQueue<Date> noiseDetectionQueue = new ConcurrentLinkedQueue<Date>();
 
-	private ConcurrentLinkedQueue<TimedAudioBuffer> audioBufferQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
+	private ConcurrentLinkedQueue<TimedAudioBuffer> noiseDetectionQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
+
+	private ConcurrentLinkedQueue<TimedAudioBuffer> speechDetectionQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
 	
 	private ConcurrentLinkedQueue<InterestingEvent> influxMessageQueue = new ConcurrentLinkedQueue<InterestingEvent>();
 	
@@ -46,14 +47,14 @@ public class ThreadCommsManager {
 
 
 	public ConcurrentLinkedQueue<TimedAudioBuffer> getAudioBufferQueue() {
-		return audioBufferQueue;
+		return speechDetectionQueue;
 	}
 
 	public ConcurrentLinkedQueue<InterestingEvent> getInfluxMessageQueue() {
 		return influxMessageQueue;
 	}
 
-	public ConcurrentLinkedQueue<Date> getNoiseDetectionQueue() {
+	public ConcurrentLinkedQueue<TimedAudioBuffer> getNoiseDetectionQueue() {
 		return noiseDetectionQueue;
 	}
 

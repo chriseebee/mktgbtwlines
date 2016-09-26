@@ -6,17 +6,21 @@ import java.util.Date;
 
 public class TimedAudioBuffer implements Serializable {
 
-	  private static final int BYTES_PER_BUFFER = 3200; //buffer size in bytes
-	  // For LINEAR16 at 16000 Hz sample rate, 3200 bytes corresponds to 100 milliseconds of audio.
+	  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final int BYTES_PER_BUFFER = 16000; //buffer size in bytes
+	  // For LINEAR16 at 16000 Hz sample rate, 16000 bytes corresponds to 500 milliseconds of audio.
 	  private byte[] buffer = new byte[BYTES_PER_BUFFER];
 	  
 	  private long startDateTime;
 	  private long endDateTime;
 	  
-	  // As all will be 100ms, no need for endDateTime
+	  // As all will be 500ms, no need for endDateTime
 	  
-	public TimedAudioBuffer(Date startDateTime) {
-		this.startDateTime=startDateTime.getTime();
+	public TimedAudioBuffer(long startDateTime) {
+		this.startDateTime=startDateTime;
 	}
  
 	public byte[] getBuffer() {
@@ -31,14 +35,16 @@ public class TimedAudioBuffer implements Serializable {
 		return startDateTime;
 	}
 
-	public void setStartDateTime(Date startDateTime) {
-		this.startDateTime = startDateTime.getTime();
+	public void setStartDateTime(long startDateTime) {
+		this.startDateTime = startDateTime;
 	}
 	
-	public void setEndDateTime(Date endDateTime) {
-		this.endDateTime = endDateTime.getTime();
+	public long getEndDateTime() {
+		return endDateTime;
 	}
-	
-	
+
+	public void setEndDateTime(long endDateTime) {
+		this.endDateTime = endDateTime;
+	}
 
 }

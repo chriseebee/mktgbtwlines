@@ -1,22 +1,29 @@
 package uk.me.chriseebee.mktgbtwlines2.audio;
 
-import javax.sound.sampled.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
-import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.TargetDataLine;
  
 /**
- * A sample program is to demonstrate how to record sound in Java
- * author: www.codejava.net
+ * This class records half second buffers from the audio input stream and sends them to a queue
+ * to be saved in a 'store'
  * 
- * http://www.codejava.net/coding/capture-and-record-sound-into-wav-file-with-java-sound-api
+ * This allows the processing to be accomplished in an async fashion
+ * 
+ * 0.5 seconds was chosen because this is a reasonable value upon which to reconstruct sentences, given that 
+ * research has shown that less than half a second of silence is likely to be 'in-sentence' and greater than 1 second
+ * a post-sentence pasuse.
+ * 
+ * Between these two values, there is more ambiguity which we will need to consider.
+ * 
  */
 public class AudioRecorder extends Thread {
 	
@@ -24,11 +31,11 @@ public class AudioRecorder extends Thread {
 	
     // record duration, in milliseconds
     //private static final long RECORD_TIME = 200000;  // 10 seconds 
-    private static final int BYTES_PER_BUFFER = 640000; //buffer size in bytes
+    private static final int BYTES_PER_BUFFER = 16000; //buffer size in bytes
 
     private volatile boolean running = true;
     
-    // For LINEAR16 at 16000 Hz sample rate, 320000 bytes corresponds to 10 seconds of audio.
+    // For LINEAR16 at 16000 Hz sample rate, 16000 bytes corresponds to 0.5 seconds of audio.
     byte[] buffer = new byte[BYTES_PER_BUFFER];
     
     AudioUtils au;
@@ -38,22 +45,17 @@ public class AudioRecorder extends Thread {
     // the line from which audio data is captured
     TargetDataLine line;
     
-    private  ConcurrentLinkedQueue<Date> queue = null;
-    
     public AudioRecorder() {
-    	
     	au = new AudioUtils();
     	au.setupRecording();
-    	queue = ThreadCommsManager.getInstance().getNoiseDetectionQueue();
     }
 
     /**
-     * Captures the sound and record into a WAV file
+     * Captures the sound and record into a byte buffer
      */
     
-    private void record(Date date) {
-    	//if (ThreadCommsManager.getInstance().isRecording()) {
-        	TimedAudioBuffer tab = new TimedAudioBuffer(date);
+    private void record() {
+        	TimedAudioBuffer tab = new TimedAudioBuffer(System.currentTimeMillis());
         	int bytesRead = 0;
 			try {
 				logger.info("Starting to record buffer");
@@ -63,31 +65,16 @@ public class AudioRecorder extends Thread {
 				logger.error("Error reading from input stream",e1);
 			}
         	if (bytesRead>0) {
-            	tab.setEndDateTime(new Date());
+            	tab.setEndDateTime(System.currentTimeMillis()s);
             	tab.setBuffer(buffer);
             	logger.info("Putting Audio Buffer on Queue");
             	ThreadCommsManager.getInstance().getAudioBufferQueue().add(tab);
         	} 
-        	
-        	ThreadCommsManager.getInstance().setRecording(false);
-    	//} 
-//    	else {
-//    		try {
-//				ais.skip(BYTES_PER_BUFFER);
-//			} catch (IOException e) {
-//				logger.error("Error skipping forwards on input stream",e);
-//			}
-//    	}
     }
     
     public void run() {
 	    while ( running ) {
-	    	Date d = queue.poll();
-	    	if (d!=null) {
-	    		logger.info("Noise Detected: Audio Recorder about to record");
-		    	ThreadCommsManager.getInstance().setRecording(true);
-		        this.record(d);
-	    	}
+		   this.record();
 	    }
     } 
  

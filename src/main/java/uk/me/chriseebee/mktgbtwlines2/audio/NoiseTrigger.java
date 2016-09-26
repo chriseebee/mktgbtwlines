@@ -18,6 +18,15 @@ public class NoiseTrigger extends Thread {
 	
     private volatile boolean running = true;
     private int THRESHOLD = 20;
+    
+    private int silenceCounter = 0;
+    private boolean isSpeaking = false;
+    private long speakingStarted = 0;
+    
+    private static final long chunkTimeLength = 250; //ms
+    // constants for the calculation of probability
+    private static final double midSentenceLength = 600; //ms
+    private static final double midUnpredictablePause = 750; //ms		
 
     public NoiseTrigger() {
 		AppConfig ac = null; 
@@ -32,41 +41,79 @@ public class NoiseTrigger extends Thread {
 		THRESHOLD = new Integer(ac.getAudioOptions().get("triggerThreshold")).intValue();
     	
     }
+    
+    private void manageState(int volume) {
+        if (volume > THRESHOLD) {
+        	if (!isSpeaking) {
+        		speakingStarted = System.currentTimeMillis();
+        	}
+        	isSpeaking = true;
+        	
+        	// how long have we been silent for?
+        	// TODO: Build this back into the model
+        	logger.info("Silence has been "+silenceCounter/(1000/chunkTimeLength)+ " seconds");
+        	// its noisy, so reset counter
+        	silenceCounter = 0;
+        	
+        } else {
+        	silenceCounter++;
+        	
+        	// 1 second is classed as a break in sentence or more, so stop now
+        	if (isSentenceTermination()  && isSpeaking) {
+        		
+    			// now is the time to stop the block and send the timings
+    			communicateSpeechBlock ();
+    			speakingStarted = 0;
+        		isSpeaking = false;
+        	}
+        	
+        	// keep SilenceCounter going, we need to track
+        	// the length of silence
+        }
+    }
+    
+    private boolean isSentenceTermination() {
+    	
+    	// any pause > 1 second is a sentence stop
+    	if (silenceCounter*chunkTimeLength > 1000) { return true; }
+    	
+    	// if this is negative, then it's a very short sentence, positive = longer
+    	double sentenceLengthRange = (System.currentTimeMillis()-speakingStarted) - midSentenceLength ;
+    	// if this is negative, then it's a very short pause, positive = longer
+    	double pauseLengthRange = (silenceCounter*chunkTimeLength) - midUnpredictablePause ;
+    	
+    	if (sentenceLengthRange*pauseLengthRange>0) { 
+    		logger.info("Is a Sentence Termination");
+    		return true; 
+    	} else { 
+    		logger.info("Not a Sentence Termination");
+    		return false; 
+    	}	
+        
+    }
 	
+    private void communicateSpeechBlock () {
+    	TimedAudioBuffer tab = new TimedAudioBuffer(speakingStarted);
+    	tab.setEndDateTime(System.currentTimeMillis());
+    	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(tab);
+    }
+    
 	private void ambientListeningLoop() {
 	    MicrophoneAnalyzer mic = new MicrophoneAnalyzer();
-	   // mic.setAudioFile(new File("AudioTestNow.flac"));
+
 	    mic.open();
 	    while(running){
 	       // mic.open();
 	        int volume = mic.getAudioVolume();
-	        boolean isSpeaking = (volume > THRESHOLD);
+	        //int ff = mic.getFrequency();
 	        System.out.print("."+volume);
-	        if(isSpeaking){
-	            try {
-	                System.out.println(".");
-	          
-	                do{
-		                if (!ThreadCommsManager.getInstance().isRecording()) {
-		                	logger.info("Starting the Recorder by sending message to queue");
-		                	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(new Date());
-		                }
-	                    Thread.sleep(1000);//Updates every second
-	                }
-	                while(mic.getAudioVolume() > THRESHOLD);
-	            } catch (Exception e) {
-	                logger.error("Error Occured in Mic Threshold loop",e);
-	           
-	            }
-	            finally{
-	             //   mic.close();//Makes sure microphone closes on exit.
-	            }
-	        }
+	        manageState(volume);
+
 	        try {
-				Thread.sleep(1000);
+				Thread.sleep(chunkTimeLength);
 			} catch (InterruptedException e) {
 				logger.error("Error Occured in thread sleep",e);
-			}//Updates every 0.1 second
+			}
 	    }
 	    mic.close();
 	}
