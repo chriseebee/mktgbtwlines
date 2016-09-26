@@ -9,6 +9,7 @@ import uk.me.chriseebee.mktgbtwlines2.audio.NoiseTrigger;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.db.StorageListenerThread;
 import uk.me.chriseebee.mktgbtwlines2.nlp.NLPListenerThread;
+import uk.me.chriseebee.mktgbtwlines2.storage.AudioClipStoreThread;
 
 
 public class NewBlissApp {
@@ -20,12 +21,14 @@ public class NewBlissApp {
 	private Speech2TextClientThread stct = null;
 	private NLPListenerThread nlplt =  null;
 	private StorageListenerThread slt = null;
+	private AudioClipStoreThread acs = null;
 	
 	private Thread t1 = null;
 	private Thread t2 = null;
 	private Thread t3 = null;
 	private Thread t4 = null;
 	private Thread t5 = null;
+	private Thread t6 = null;
 			
 	public NewBlissApp(String filePath) throws Exception {
 		ConfigLoader.getConfigLoader(filePath);
@@ -46,30 +49,37 @@ public class NewBlissApp {
 	    ar = new AudioRecorder();
 	    t2 = new Thread (ar);
 	    
+		// 5. A thread that pushes the events to Influx DB from a Queue
+	    //
+	    acs = new AudioClipStoreThread();
+	    t3 = new Thread (acs);
+	    
 		//
 	    // 3. A speech recog API that picks up the chunks and processes
 	    //
 	    stct = new Speech2TextClientThread();
-	    t3 = new Thread (stct);
+	    t4 = new Thread (stct);
 	    
 		// 4. An NLP thread that consumes the responses from the speech 
 		//    to text API, processes them and raises events if required
 		//
 	    nlplt = new NLPListenerThread();
-	    t4 = new Thread (nlplt);
+	    t5 = new Thread (nlplt);
 	    
 		// 5. A thread that pushes the events to Influx DB from a Queue
 	    //
 	    slt = new StorageListenerThread();
-	    t5 = new Thread (slt);
+	    t6 = new Thread (slt);
 	
 		// Start the threads in reverse dependency order
 	    logger.info("STARTING STORAGE THREAD");
-	    t5.start();
+	    //t6.start();
 	    logger.info("STARTING NLP THREAD");
-	    t4.start();
+	    //t5.start();
 	    logger.info("STARTING SPEECH TO TEXT THREAD");
-	    t3.start();    
+	    t4.start();    
+	    logger.info("STARTING CLIP THREAD");
+	    t3.start();
 	    logger.info("STARTING RECORDING THREAD");
 	    t2.start();
 	    logger.info("STARTING MIC LISTENER THREAD");

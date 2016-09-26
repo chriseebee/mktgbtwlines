@@ -62,7 +62,7 @@ public class NoiseTrigger extends Thread {
         	silenceCounter++;
         	
         	// 1 second is classed as a break in sentence or more, so stop now
-        	if (isSentenceTermination()  && isSpeaking) {
+        	if (isSpeaking && silenceCounter*chunkTimeLength > 500 && isSentenceTermination()) {
         		logger.info("Time to process a block of speech now");
     			// now is the time to stop the block and send the timings
     			communicateSpeechBlock ();
@@ -99,7 +99,7 @@ public class NoiseTrigger extends Thread {
     	TimedAudioBuffer tab = new TimedAudioBuffer(speakingStarted);
     	tab.setEndDateTime(System.currentTimeMillis());
     	logger.info("Block of speech identified is "+tab.getLength()/1000+" seconds long");
-    	//ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(tab);
+    	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(tab);
     }
     
 	private void ambientListeningLoop() {
