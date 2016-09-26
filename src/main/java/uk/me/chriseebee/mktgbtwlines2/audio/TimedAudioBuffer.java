@@ -14,8 +14,8 @@ public class TimedAudioBuffer implements Serializable {
 	  // For LINEAR16 at 16000 Hz sample rate, 16000 bytes corresponds to 500 milliseconds of audio.
 	  private byte[] buffer = new byte[BYTES_PER_BUFFER];
 	  
-	  private long startDateTime;
-	  private long endDateTime;
+	  private long startDateTime = 0;
+	  private long endDateTime = 0;
 	  
 	  // As all will be 500ms, no need for endDateTime
 	  
@@ -45,6 +45,14 @@ public class TimedAudioBuffer implements Serializable {
 
 	public void setEndDateTime(long endDateTime) {
 		this.endDateTime = endDateTime;
+	}
+	
+	public double getLength() {
+		if (this.endDateTime>0 && this.startDateTime>0) {
+			return this.endDateTime-this.startDateTime;
+		} else {
+			return -1;
+		}
 	}
 
 }

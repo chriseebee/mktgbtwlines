@@ -34,7 +34,7 @@ repositories {
 sourceSets {
 	main {
 	  java {
-	  	exclude 'uk/me/chriseebee/mktgbtwlines/speech2test/cmusphinx/**'
+	  	exclude '**/cmusphinx/*'
 	  }
 	}
 }
@@ -158,12 +158,16 @@ task setup << {
 }
 
 test {
-
-  beforeTest { descriptor ->
-    logger.lifecycle("Running Test " + descriptor)
-    classpath.each { 
-    	logger.lifecycle("CLASSPATH = "+it)
-   	}
-  }
+outputs.upToDateWhen { false }
+    testLogging {
+        // Show that tests are run in the command-line output
+        events 'started', 'passed'
+    }
+  //beforeTest { descriptor ->
+  //  logger.lifecycle("Running Test " + descriptor)
+  //  classpath.each { 
+  //  	logger.lifecycle("CLASSPATH = "+it)
+  // 	}
+  //}
 }
 

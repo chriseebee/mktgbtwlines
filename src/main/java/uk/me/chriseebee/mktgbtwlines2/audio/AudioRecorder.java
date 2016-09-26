@@ -65,7 +65,7 @@ public class AudioRecorder extends Thread {
 				logger.error("Error reading from input stream",e1);
 			}
         	if (bytesRead>0) {
-            	tab.setEndDateTime(System.currentTimeMillis()s);
+            	tab.setEndDateTime(System.currentTimeMillis());
             	tab.setBuffer(buffer);
             	logger.info("Putting Audio Buffer on Queue");
             	ThreadCommsManager.getInstance().getAudioBufferQueue().add(tab);

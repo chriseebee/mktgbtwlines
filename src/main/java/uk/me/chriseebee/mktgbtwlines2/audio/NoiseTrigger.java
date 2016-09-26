@@ -17,9 +17,9 @@ public class NoiseTrigger extends Thread {
 	Logger logger = LoggerFactory.getLogger(NoiseTrigger.class);
 	
     private volatile boolean running = true;
-    private int THRESHOLD = 20;
+    private int THRESHOLD = 30;
     
-    private int silenceCounter = 0;
+    private double silenceCounter = 0;
     private boolean isSpeaking = false;
     private long speakingStarted = 0;
     
@@ -45,13 +45,16 @@ public class NoiseTrigger extends Thread {
     private void manageState(int volume) {
         if (volume > THRESHOLD) {
         	if (!isSpeaking) {
+        		logger.info("Speaking Started");
         		speakingStarted = System.currentTimeMillis();
         	}
         	isSpeaking = true;
         	
         	// how long have we been silent for?
         	// TODO: Build this back into the model
-        	logger.info("Silence has been "+silenceCounter/(1000/chunkTimeLength)+ " seconds");
+        	//if (silenceCounter>0) {
+        	//	logger.info("Silence was "+silenceCounter/(1000/chunkTimeLength)+ " seconds");
+        	//}
         	// its noisy, so reset counter
         	silenceCounter = 0;
         	
@@ -60,7 +63,7 @@ public class NoiseTrigger extends Thread {
         	
         	// 1 second is classed as a break in sentence or more, so stop now
         	if (isSentenceTermination()  && isSpeaking) {
-        		
+        		logger.info("Time to process a block of speech now");
     			// now is the time to stop the block and send the timings
     			communicateSpeechBlock ();
     			speakingStarted = 0;
@@ -83,10 +86,10 @@ public class NoiseTrigger extends Thread {
     	double pauseLengthRange = (silenceCounter*chunkTimeLength) - midUnpredictablePause ;
     	
     	if (sentenceLengthRange*pauseLengthRange>0) { 
-    		logger.info("Is a Sentence Termination");
+    		logger.info("Sentence Termination Detected");
     		return true; 
     	} else { 
-    		logger.info("Not a Sentence Termination");
+    		//logger.info("Not a Sentence Termination");
     		return false; 
     	}	
         
@@ -95,7 +98,8 @@ public class NoiseTrigger extends Thread {
     private void communicateSpeechBlock () {
     	TimedAudioBuffer tab = new TimedAudioBuffer(speakingStarted);
     	tab.setEndDateTime(System.currentTimeMillis());
-    	ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(tab);
+    	logger.info("Block of speech identified is "+tab.getLength()/1000+" seconds long");
+    	//ThreadCommsManager.getInstance().getNoiseDetectionQueue().add(tab);
     }
     
 	private void ambientListeningLoop() {
@@ -106,7 +110,6 @@ public class NoiseTrigger extends Thread {
 	       // mic.open();
 	        int volume = mic.getAudioVolume();
 	        //int ff = mic.getFrequency();
-	        System.out.print("."+volume);
 	        manageState(volume);
 
 	        try {

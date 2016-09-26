@@ -8,6 +8,7 @@ import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
+import uk.me.chriseebee.mktgbtwlines2.storage.AudioClipStore;
 
 
 public class Speech2TextClientThread extends Thread {
@@ -39,8 +40,9 @@ public class Speech2TextClientThread extends Thread {
     
     public void run() {
         while ( running ) {
-            TimedAudioBuffer tab = ThreadCommsManager.getInstance().getAudioBufferQueue().poll();
+            TimedAudioBuffer tab = ThreadCommsManager.getInstance().getNoiseDetectionQueue().poll();
             if (tab!=null) {
+            	AudioClipStore.getInstance().get(tab);
             	gca.processBuffer(tab);
             }
         }

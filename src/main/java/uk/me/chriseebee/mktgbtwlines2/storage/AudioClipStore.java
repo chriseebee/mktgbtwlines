@@ -1,60 +1,70 @@
 package uk.me.chriseebee.mktgbtwlines2.storage;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
 import java.util.Collection;
 import java.util.NavigableMap;
-import java.util.NavigableSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
 
 /**
- * THis class is used to store the buffers we receive
+ * This class is used to store the buffers we receive
  * from the audioinputstream
  * 
  * It abstracts from the calling classes where the audio is 
  * although that should be
  * 
- * 1. In a queue immediately for consumption by the speech to text service
- *    being used
+ * 1. In a memory store that can be searched fast, then, when older
+ *
  * 2. On the file system, where the objects are synchronized to a file
+ *
  * @author cbell
  *
  */
 public class AudioClipStore {
 	
-	private static final String dataDirName = "data_files";
+	Logger logger = LoggerFactory.getLogger(AudioClipStore .class);
+	
+	private static AudioClipStore _instance = null;
+	//private static final String dataDirName = "data_files";
 	private static NavigableMap<Long, TimedAudioBuffer> fileMap = new TreeMap<Long,TimedAudioBuffer>();
+	
+	private AudioClipStore() {}
+	
+	public static AudioClipStore getInstance () {
+		if (_instance == null) {
+			_instance = new AudioClipStore();
+		}
+		
+		return _instance;
+	}
+
 
 	public void put (TimedAudioBuffer tab) {
 		fileMap.put(tab.getStartDateTime(), tab);
 	}
 	
-	
 	// make sure that the caller adds an extra chunk to the endTime
 	// otherwise it might truncate
-	public TimedAudioBuffer get (long startTime, long endTime) {
+	public void get (TimedAudioBuffer tabIn) {
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-		TimedAudioBuffer t1 = new TimedAudioBuffer (startTime);
-		t1.setEndDateTime(endTime);
-		Collection<TimedAudioBuffer> tabs = fileMap.subMap(startTime, endTime).values();
+		Collection<TimedAudioBuffer> tabs = fileMap.subMap(tabIn.getStartDateTime(),tabIn.getEndDateTime()).values();
 		for (TimedAudioBuffer tab : tabs) {
 			try {
 				outputStream.write(tab.getBuffer());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Failed to write buffer to outputstream",e);
 			}
 		}
-		t1.setBuffer(outputStream.toByteArray());
-		return t1;
+		tabIn.setBuffer(outputStream.toByteArray());
+		logger.info("Constructed byte array for "+tabIn.getLength()/1000+" seconds, which is "+tabIn.getBuffer().length+ " bytes");
 	}
 //	
 //	public TimedAudioBuffer getAudioBufferNearestTime(long time) {
