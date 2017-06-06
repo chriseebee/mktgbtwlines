@@ -1,6 +1,7 @@
 plugins { 
   id "de.undercouch.download" version "3.1.1"
   id "com.google.osdetector" version "1.4.0"
+  id "org.flywaydb.flyway" version "4.0.3"
 }
 
 apply plugin: 'java'
@@ -8,6 +9,7 @@ apply plugin: 'maven'
 apply plugin: 'com.google.osdetector'
 apply plugin: 'application'
 apply plugin: 'de.undercouch.download'
+apply plugin: 'scala'
 
 group = 'uk.me.chriseebee'
 version = '0.0.1-SNAPSHOT'
@@ -21,10 +23,15 @@ targetCompatibility = 1.8
 def nlpJarName = 'stanford-english-corenlp-2016-01-10-models.jar'
 def googleSpeechJarName = 'grpc-sample-1.0.jar'
 
+
+flyway {
+    url = 'jdbc:h2:file:~/myh2'
+    user = 'sa'
+}
+
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
-
 
 repositories {
      maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
@@ -40,134 +47,173 @@ sourceSets {
 }
 
 dependencies {
-	compile group: 'com.google.guava', name: 'guava', version: '19.0'
+  compile 'org.scala-lang:scala-library-all:2.12.2'
+}
+
+tasks.withType(ScalaCompile) {
+  ScalaCompileOptions.metaClass.daemonServer = true
+  ScalaCompileOptions.metaClass.fork = true
+  ScalaCompileOptions.metaClass.useAnt = false
+  ScalaCompileOptions.metaClass.useCompileDaemon = false
+}
+
+dependencies {
+	compile group: 'com.typesafe.akka', name: 'akka-actor_2.12', version: '2.5.2'
+	compile group: 'com.typesafe.akka', name: 'akka-remote_2.12', version: '2.5.2'
+    compile group: 'org.scala-lang', name: 'scala-library-all', version: '2.12.2'
+	compile group: 'com.google.guava', name: 'guava', version: '20.0'
+	compile group: 'com.google.cloud', name: 'google-cloud-speech', version: '0.8.3-alpha'
+	compile group: 'com.google.truth', name: 'truth', version: '0.32'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version:'2.8.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.8.1'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version:'2.8.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version:'2.8.1'
-    //compile group: 'edu.cmu.sphinx', name: 'sphinx4-core', version:'5prealpha-SNAPSHOT'
-    //compile group: 'edu.cmu.sphinx', name: 'sphinx4-data', version:'5prealpha-SNAPSHOT'
-    compile group: 'com.ibm.watson.developer_cloud', name: 'java-sdk', version:'3.3.0'
-    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.21'
-    compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.21'
+    compile group: 'com.ibm.watson.developer_cloud', name: 'java-sdk', version:'3.8.0'
+    'com.ibm.watson.developer_cloud:natural-language-understanding:3.8.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.25'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.25'
     compile group: 'commons-cli', name: 'commons-cli', version:'1.3.1'
-    compile group: 'io.grpc', name: 'grpc-all', version:'1.0.0'
+    compile group: 'io.grpc', name: 'grpc-all', version:'1.0.3'
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version:'1.1.1'
     compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version:'3.6.0'
     compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
     compile group: 'org.apache.commons', name: 'commons-collections4', version:'4.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.3.6'
+    compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version:'4.0.2'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version:'4.3.6'
+    compile group: 'org.json', name: 'json', version:'20140107'
+    compile group: 'com.mashape.unirest', name: 'unirest-java', version:'1.4.9'
     compile group: 'io.netty', name: 'netty-tcnative-boringssl-static', version:'1.1.33.Fork20', classifier:osdetector.classifier
     compile group: 'org.xerial', name: 'sqlite-jdbc', version:'3.8.11.2'
-    compile group: 'com.google.auth', name: 'google-auth-library-credentials', version: '0.4.0'
-    compile group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '0.4.0'
-    compile files('libs/grpc-sample-1.0.jar', 'libs/stanford-english-corenlp-2016-01-10-models.jar')
+    compile group: 'com.google.auth', name: 'google-auth-library-credentials', version: '0.6.0'
+    compile group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '0.6.0'
+    compile files('libs/grpc-sample-1.0.jar')
+    compile files('libs/stanford-english-corenlp-2016-01-10-models.jar')
+	compile group: 'com.h2database', name: 'h2', version: '1.4.194'
+	compile group: 'com.orientechnologies', name: 'orientdb-core', version: '2.2.17'
+	compile group: 'com.orientechnologies', name: 'orientdb-client', version: '2.2.17'
+	compile group: 'com.orientechnologies', name: 'orientdb-jdbc', version: '2.2.17'
+	compile group: 'com.tinkerpop.blueprints', name: 'blueprints-core', version: '2.6.0'
+	compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version: '2.2.17'
+	compile group: 'com.orientechnologies', name: 'orientdb-enterprise', version: '2.1.25'
+	compile 'com.rabbitmq:amqp-client:4.1.0'
     testCompile group: 'junit', name: 'junit', version:'4.12'
+    testCompile group: 'commons-io', name: 'commons-io', version:'2.4'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.1.0-RC.1'
 }
 
-task testGoogleCredsEnv << {
-  if (!System.getenv("GOOGLE_APPLICATION_CREDENTIALS")) {
-  	
-  	throw new GradleException("You must have your ENV variable GOOGLE_APPLICATION_CREDENTIALS set for Google Credentials!") 
-   
-  } else {
-  
-    if (!project.file(System.getenv("GOOGLE_APPLICATION_CREDENTIALS")).exists()) { 
-		throw new GradleException("The Google Credentials file referenced in the ENV var does not exist")
-	} else {
-		println "Env is setup OK";
-	}
-
+task testGoogleCredsEnv {
+  doLast {
+	  if (!System.getenv("GOOGLE_APPLICATION_CREDENTIALS")) {
+	  	
+	  	throw new GradleException("You must have your ENV variable GOOGLE_APPLICATION_CREDENTIALS set for Google Credentials!") 
+	   
+	  } else {
+	  
+	    if (!project.file(System.getenv("GOOGLE_APPLICATION_CREDENTIALS")).exists()) { 
+			throw new GradleException("The Google Credentials file referenced in the ENV var does not exist")
+		} else {
+			println "Env is setup OK";
+		}
+	
+	  }
   }
 }
 
-
-
 // NOT TESTED
-task downloadStanfordNlpJar << {
-println "Downloading Stanford API";
-  if (!project.file('libs/'+nlpJarName).exists()) { 
-	download {
-        src 'http://nlp.stanford.edu/software/'+nlpJarName
-        dest 'libs'
-    }
-   } else {
-   	  println "Already downloaded";
+task downloadStanfordNlpJar {
+	doLast {
+	  println "Downloading Stanford API";
+	  if (!project.file('libs/'+nlpJarName).exists()) { 
+		download {
+	        src 'http://nlp.stanford.edu/software/'+nlpJarName
+	        dest 'libs'
+	    }
+	   } else {
+	   	  println "Already downloaded";
+	   }
    }
 }
 
 // TESTED
-task downloadGoogleSpeech << {
-  if (!project.file('../java-docs-samples').exists()) { 
-	println "Downloading Google Speech API from Git";
-	def stdout = new ByteArrayOutputStream()
-	exec {
-		workingDir '../'
-	    commandLine 'git','clone','https://github.com/GoogleCloudPlatform/java-docs-samples.git'
-	    ignoreExitValue true
-	    standardOutput = stdout;
-
-	    if(execResult == 0) {
-	       println "SUCCESS";
-	    } else {
-	       println "FAIL";
-	       throw new GradleException("Could Not Download Google Speech Client")
-	    }
-		
-	}
-	println "Output:\n$stdout";
- } else {
- 	println "Already downloaded";
- }
+task downloadGoogleSpeech {
+	doLast {
+	  if (!project.file('../java-docs-samples').exists()) { 
+		println "Downloading Google Speech API from Git";
+		def stdout = new ByteArrayOutputStream()
+		exec {
+			workingDir '../'
+		    commandLine 'git','clone','https://github.com/GoogleCloudPlatform/java-docs-samples.git'
+		    ignoreExitValue true
+		    standardOutput = stdout;
+	
+		    if(execResult == 0) {
+		       println "SUCCESS";
+		    } else {
+		       println "FAIL";
+		       throw new GradleException("Could Not Download Google Speech Client")
+		    }
+			
+		}
+		println "Output:\n$stdout";
+	 } else {
+	 	println "Already downloaded";
+	 }
+  }
 }
 
 // NOT TESTED
-task installGoogleSpeech <<  {
+task installGoogleSpeech {
 
-	println "Installing Google Speech API via Maven";
-	def stdout = new ByteArrayOutputStream()
-	exec {
-	   workingDir '../java-docs-samples/speech/grpc'
-	   commandLine 'mvn','install'
-	   standardOutput = stdout;
+   doLast {
+		println "Installing Google Speech API via Maven";
+		def stdout = new ByteArrayOutputStream()
+		exec {
+		   workingDir '../java-docs-samples/speech/grpc'
+		   commandLine 'mvn','install'
+		   standardOutput = stdout;
+		}
+		println "Output:\n$stdout";
 	}
-	println "Output:\n$stdout";
 }
 
 // TESTED
-task copyGoogleJar(type: Copy) << {
-   from '../java-docs-samples/speech/grpc/target/'+nlpJarName
-   into './libs_test'
+task copyGoogleJar(type: Copy) {
+	   from '../java-docs-samples/speech/grpc/target/'+nlpJarName
+	   into './libs_test'
 }
 
 
-task setup << {
- 
-  println "Setup Starting";
-  
-  if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-    throw new GradleException("This build must be run with java 8")
+task setup {
+ doLast {
+	  println "Setup Starting";
+	  
+	  if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+	    throw new GradleException("This build must be run with java 8")
+	  }
+	  
+	  testGoogleCredsEnv.execute()
+	  downloadGoogleSpeech.execute() 
+	  installGoogleSpeech.execute() 
+	  copyGoogleJar.execute() 
+	  downloadStanfordNlpJar.execute()
+	  
+	  println "Setup Complete";
   }
-  
-  testGoogleCredsEnv.execute()
-  downloadGoogleSpeech.execute() 
-  installGoogleSpeech.execute() 
-  copyGoogleJar.execute() 
-  downloadStanfordNlpJar.execute()
-  
-  println "Setup Complete";
 }
 
 test {
-outputs.upToDateWhen { false }
+	outputs.upToDateWhen { false }
+	testLogging {
+        showStandardStreams = true
+    }
+	
+	//testGoogleCredsEnv.execute()
+	
     testLogging {
         // Show that tests are run in the command-line output
         events 'started', 'passed'
     }
-  //beforeTest { descriptor ->
-  //  logger.lifecycle("Running Test " + descriptor)
-  //  classpath.each { 
-  //  	logger.lifecycle("CLASSPATH = "+it)
-  // 	}
-  //}
+
 }
 

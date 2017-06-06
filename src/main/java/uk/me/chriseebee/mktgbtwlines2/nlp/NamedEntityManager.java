@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Sentence;
+import uk.me.chriseebee.mktgbtwlines2.Utils;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 
 
@@ -35,40 +36,24 @@ public class NamedEntityManager {
 	private List<String> productsFull = new ArrayList<String>();
 	private List<String> brandsFull = new ArrayList<String>();
 	private List<String> intents = new ArrayList<String>();
+	
+	//DB db = null;
 
 	public NamedEntityManager() {
-		getLines(PRODUCTS, products);
-		getLines(PRODUCTS_FULL, productsFull);
-		getLines(BRANDS, brands);
-		getLines(BRANDS_FULL, brandsFull);
-		getLines(INTENTS, intents);
+		
+		//db = DBMaker.memoryDB().make();
+		
+		Utils.getLines(PRODUCTS, products);
+		Utils.getLines(PRODUCTS_FULL, productsFull);
+		Utils.getLines(BRANDS, brands);
+		Utils.getLines(BRANDS_FULL, brandsFull);
+		Utils.getLines(INTENTS, intents);
 		
 		logger.info("Product Count = "+products.size() );
 		logger.info("Intent Count = "+intents.size() );
 	}
 	
-	private void getLines(String resourceName, List<String> list) {
-
-		BufferedReader r = new BufferedReader(new InputStreamReader((NamedEntityManager.class.getResourceAsStream(resourceName))));
-
-	    String inLine; //Buffer to store the current line
-	    try {
-			while ((inLine = r.readLine()) != null) //Read line-by-line, until end of file
-			{
-				//logger.info("Adding" + inLine);
-			    list.add(inLine);
-			}
-		} catch (IOException e) {
-			logger.error("Could not load  File",e);
-		}
-	    try {
-			r.close();
-		} catch (IOException e) {
-			logger.error("Could not load  File",e);
-		} 
-	    
-	   
-	}
+	
 	
 	public List<String> getIntents() {
 		return intents;
@@ -117,6 +102,16 @@ public class NamedEntityManager {
 	}
 	
 	public String isWordRecognized(String lookup) {
+		
+		/* TODO
+		 This will have to change to addomodate a lookup of unique words in Orient
+		 In Orient we will need to index all names of entities into a list similar to this memory list
+		 so that we can call that instead of this local code.
+		 
+		 However, we could pull all the names out of Orient and do that here in mem. Could be faster
+		 
+		*/
+		
 		// first lets check the brand list
 		if (brands.indexOf(lookup.toLowerCase())>0) {
 			return BRAND_TYPE;

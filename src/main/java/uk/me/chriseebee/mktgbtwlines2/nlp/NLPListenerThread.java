@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
+import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;
 
 
 public class NLPListenerThread extends Thread {
@@ -16,7 +17,7 @@ public class NLPListenerThread extends Thread {
     private volatile boolean running = true;
     NLPPipeline nlpClient = null;
     
-    public NLPListenerThread() {
+    public NLPListenerThread() throws ConfigurationException {
     	nlpClient = new NLPPipeline();
         this.queue = ThreadCommsManager.getInstance().getNlpMessageQueue();
     }

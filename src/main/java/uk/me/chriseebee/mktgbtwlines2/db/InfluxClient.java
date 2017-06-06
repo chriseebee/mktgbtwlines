@@ -1,4 +1,4 @@
-package uk.me.chriseebee.mktgbtwlines2.db.influx;
+package uk.me.chriseebee.mktgbtwlines2.db;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
+import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;
+import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 
 public class InfluxClient {
@@ -25,27 +27,30 @@ public class InfluxClient {
     String password = null;
     URL obj; 
     
-	public InfluxClient() {
+	public InfluxClient() throws ConfigurationException {
 		//TODO: Replace ports with configuration calls
-		ConfigLoader cl = null;
+		AppConfig ac = null;
 		try {
-			cl = ConfigLoader.getConfigLoader();
-		} catch (Exception e1) {
-			logger.error("Failed to get Configuration",e1);
-		}
-		influxHostname = cl.getConfig().getInfluxParams().get("hostname");
-		username = cl.getConfig().getInfluxParams().get("username");
-		password = cl.getConfig().getInfluxParams().get("password");
-		
-    	try {
-			obj = new URL(POST_URL.replace("SERVER", influxHostname));
-		} catch (MalformedURLException e) {
-			logger.error("Failed to get Server details for Influx",e);
-		}
+			ac = ConfigLoader.getConfig();
+			influxHostname = ac.getInfluxParams().get("hostname");
+			username = ac.getInfluxParams().get("username");
+			password = ac.getInfluxParams().get("password");
+			
+	    	try {
+				obj = new URL(POST_URL.replace("SERVER", influxHostname));
+			} catch (MalformedURLException e) {
+				logger.error("Failed to get Server details for Influx",e);
+			}
+			
+		} catch( ConfigurationException ce) {
+			logger.error("Failed to get Configuration for Influx",ce);
+			throw ce;
+		} 
+
 	}
 	
 	
-    public void sendEventToInflux(InterestingEvent ev) throws IOException {
+    public void sendEventToDataStore(InterestingEvent ev) throws IOException {
         
     	logger.info("Sending interesting event to Influx: "+ev.toString());
 		String message = ev.toString();
@@ -82,7 +87,7 @@ public class InfluxClient {
     }
     
     
-    public void sendEventToInflux(String text) throws IOException {
+    public void sendEventToDataStore(String text) throws IOException {
         
     	logger.info("Sending interesting event to Influx: "+text);
     	

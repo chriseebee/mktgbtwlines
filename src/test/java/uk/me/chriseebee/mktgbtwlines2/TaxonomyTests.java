@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +14,11 @@ import uk.me.chriseebee.mktgbtwlines2.nlp.NamedEntityManager;
 
 public class TaxonomyTests {
 
-	Logger logger = LoggerFactory.getLogger(TaxonomyTests.class);
-	NamedEntityManager tm;
+	static Logger logger = LoggerFactory.getLogger(TaxonomyTests.class);
+	static NamedEntityManager tm;
 	
-	 @Before
-	 public void before() throws Exception {
+	 @BeforeClass
+	 public static void before() throws Exception {
 		 logger.info("Setting it up!");
     	tm = new NamedEntityManager();
 	 }

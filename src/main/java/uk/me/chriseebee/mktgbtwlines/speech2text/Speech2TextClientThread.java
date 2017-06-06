@@ -26,23 +26,26 @@ public class Speech2TextClientThread extends Thread {
     	
 		AppConfig ac = null; 
 		try {
-			ConfigLoader cl = ConfigLoader.getConfigLoader();
-			ac = cl.getConfig();
+			ac = ConfigLoader.getConfig();
+			
+	    	mode = ac.getAudioOptions().get("whichService");
+	    	
+	    	gca = new GoogleClientApp();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("BIG ERROR LOADING CONFIG",e);
 		}
-		
-    	mode = ac.getAudioOptions().get("whichService");
-    	
-    	gca = new GoogleClientApp();
     }
     
     public void run() {
         while ( running ) {
-            TimedAudioBuffer tab = ThreadCommsManager.getInstance().getNoiseDetectionQueue().poll();
+            TimedAudioBuffer tab = ThreadCommsManager.getInstance().getSentenceInSpeechDetectionQueue().poll();
             if (tab!=null) {
-            	AudioClipStore.getInstance().get(tab);
+            	try {
+					AudioClipStore.getInstance(AudioClipStore.STORE_TYPE_MEMORY).get(tab);
+				} catch (Exception e) {
+					logger.error("Error: "+e.getLocalizedMessage());
+				}
             	gca.processBuffer(tab);
             }
         }

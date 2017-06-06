@@ -51,14 +51,22 @@ public class GoogleClientAppTest {
 		    StreamingRecognizeClient2 client = new StreamingRecognizeClient2(channel, 16000);
 		    
 		    client.setup();
-		    FileInputStream fis = new FileInputStream(new File(uri));
-		    
-		    client.recognize(fis, new Date());
-		    
-		    List<StreamingRecognizeResponse> responses = client.getResponses();
-		    processResponse(responses);
+		    if (uri!=null) {
+		    	File f = new File(uri);
+		    	if (f.exists() && !f.isDirectory()) {
+		    		FileInputStream fis = new FileInputStream(f);
+				    
+				    client.recognize(fis, new Date());
+				    
+				    List<StreamingRecognizeResponse> responses = client.getResponses();
+				    processResponse(responses);
+		    	} else {
+		    		logger.warn("Could not process file as it doesn't exist or is a directory");
+		    	}
+		    } else {
+	    		logger.warn("Could not process file as URI was null");
+	    	}
 		}
-
 	  }
 	  
 	  

@@ -3,6 +3,8 @@ package uk.me.chriseebee.mktgbtwlines2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
+
 import uk.me.chriseebee.mktgbtwlines.speech2text.Speech2TextClientThread;
 import uk.me.chriseebee.mktgbtwlines2.audio.AudioRecorder;
 import uk.me.chriseebee.mktgbtwlines2.audio.NoiseTrigger;
@@ -39,7 +41,7 @@ public class NewBlissApp {
 		// 1. A microphone listener that triggers the main 
 		//    sound recording when noise happens. THis will always
 		//    be running
-		nt = new NoiseTrigger();
+		nt = new NoiseTrigger(new MicrophoneAnalyzer());
 	    t1 = new Thread (nt);
 	    
 		//
@@ -119,6 +121,13 @@ public class NewBlissApp {
 	    	System.out.println("Error in main launch");
 	    	e.printStackTrace();
 	    } 
+    	
+    	
+//    	Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+//            public void run() {
+//                //code to close connection
+//            }
+//        }, "Shutdown-thread"));
     	
     	System.out.println("---------------------------------------");
     	System.out.println("------- APPLICATION STARTED -----------");

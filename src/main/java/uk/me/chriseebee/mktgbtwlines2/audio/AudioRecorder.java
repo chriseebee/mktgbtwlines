@@ -40,7 +40,7 @@ public class AudioRecorder extends Thread {
     
     AudioUtils au;
     // format of audio file for Wave
-    AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
+    //AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
  
     // the line from which audio data is captured
     TargetDataLine line;

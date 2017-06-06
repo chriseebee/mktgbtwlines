@@ -2,6 +2,10 @@ package com.darkprograms.speech.microphone;
 
 import javax.sound.sampled.AudioFileFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /********************************************************************************************
  * Microphone Analyzer class, detects pitch and volume while extending the microphone class.
  * Implemented as a precursor to a Voice Activity Detection (VAD) algorithm.
@@ -11,8 +15,9 @@ import javax.sound.sampled.AudioFileFormat;
  * @author Aaron Gokaslan
  ********************************************************************************************/
 
-public class MicrophoneAnalyzer extends Microphone {
+public class MicrophoneAnalyzer extends Microphone implements MicrophoneInterface {
 
+	Logger logger = LoggerFactory.getLogger(MicrophoneAnalyzer.class);
 	/**
 	 * Constructor
 	 */
@@ -101,7 +106,7 @@ public class MicrophoneAnalyzer extends Microphone {
 	 * @param numOfBytes The length of the returned array.
 	 * @return The specified array or null if it cannot.
 	 */
-	private byte[] getBytes(int numOfBytes){
+	public byte[] getBytes(int numOfBytes){
 		if(getTargetDataLine()!=null){
     		byte[] data = new byte[numOfBytes];
     		this.getTargetDataLine().read(data, 0, numOfBytes);
@@ -291,4 +296,13 @@ public class MicrophoneAnalyzer extends Microphone {
 	    }
 	    return micBufferData;
 	}
+	
+	public void sleepThread(int milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			logger.error("Error Occured in thread sleep",e);
+		}	
+	}
+	
 }

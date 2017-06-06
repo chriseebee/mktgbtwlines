@@ -13,13 +13,27 @@ public class AudioClipStoreThread extends Thread {
 	private volatile boolean running = true;
 	
 	public AudioClipStoreThread() {
+		logger.info("Adding shutdown hook for AudioClipStore");
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() { try {
+				AudioClipStore.getInstance(AudioClipStore.STORE_TYPE_DATABASE).closeDatabase();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} }
+		});
+		
 	}
 
 	public void run() {
 	    while ( running ) {
 	        TimedAudioBuffer tab = ThreadCommsManager.getInstance().getAudioBufferQueue().poll();
 	        if (tab!=null) {
-	        	AudioClipStore.getInstance().put(tab);
+	        	try {
+					AudioClipStore.getInstance(AudioClipStore.STORE_TYPE_DATABASE).put(tab);
+				} catch (Exception e) {
+					logger.error("Error: "+e.getLocalizedMessage());
+				}
 	        }
 	    }
 	    try {

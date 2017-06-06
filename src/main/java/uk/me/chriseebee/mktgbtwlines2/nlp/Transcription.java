@@ -9,7 +9,6 @@ public class Transcription {
 	private Date   audioStartDate;
 	
 	public Transcription() {
-
 	}
 
 	public Transcription(String transcriptionText, Date audioStartDate) {

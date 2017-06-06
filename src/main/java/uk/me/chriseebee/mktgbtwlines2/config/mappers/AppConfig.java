@@ -5,9 +5,11 @@ import java.util.Map;
 public class AppConfig {
 	
 	private Map<String, String> influxParams;
+	private Map<String, String> orientParams;
 	private Map<String, String> watsonKeys;
 	private Map<String, String> witKeys;
 	private Map<String, String> audioOptions;
+	private Map<String, String> audioClipStorageOptions;
 	
 	public Map<String, String> getWatsonKeys() {
 		return watsonKeys;
@@ -34,6 +36,21 @@ public class AppConfig {
 	public void setAudioOptions(Map<String, String> audioOptions) {
 		this.audioOptions = audioOptions;
 	} 
+	
+	public void setAudioClipStorageOptions(Map<String, String> audioClipStorageOptions) {
+		this.audioClipStorageOptions = audioClipStorageOptions;
+	}
+	
+	public Map<String, String> getAudioClipStorageOptions() {
+		return audioClipStorageOptions;
+	}
+	public Map<String, String> getOrientParams() {
+		return orientParams;
+	}
+	public void setOrientParams(Map<String, String> orientParams) {
+		this.orientParams = orientParams;
+	}
+
 	
 	
 	

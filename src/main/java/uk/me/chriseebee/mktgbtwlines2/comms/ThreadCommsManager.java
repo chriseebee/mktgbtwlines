@@ -28,12 +28,12 @@ public class ThreadCommsManager {
 		return _instance;
 	}
 	
-
-	private ConcurrentLinkedQueue<TimedAudioBuffer> noiseDetectionQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
-
-	private ConcurrentLinkedQueue<TimedAudioBuffer> speechDetectionQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
 	
-	private ConcurrentLinkedQueue<InterestingEvent> influxMessageQueue = new ConcurrentLinkedQueue<InterestingEvent>();
+	private ConcurrentLinkedQueue<TimedAudioBuffer> audioBufferQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
+
+	private ConcurrentLinkedQueue<TimedAudioBuffer> sentenceInSpeechDetectionQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
+	
+	private ConcurrentLinkedQueue<InterestingEvent> storageMessageQueue = new ConcurrentLinkedQueue<InterestingEvent>();
 	
 	private ConcurrentLinkedQueue<Transcription> nlpMessageQueue = new ConcurrentLinkedQueue<Transcription>();
 
@@ -45,18 +45,18 @@ public class ThreadCommsManager {
 		this.recording = recording;
 	}
 
-
 	public ConcurrentLinkedQueue<TimedAudioBuffer> getAudioBufferQueue() {
-		return speechDetectionQueue;
+		return audioBufferQueue;
 	}
 
-	public ConcurrentLinkedQueue<InterestingEvent> getInfluxMessageQueue() {
-		return influxMessageQueue;
+	public ConcurrentLinkedQueue<TimedAudioBuffer> getSentenceInSpeechDetectionQueue() {
+		return sentenceInSpeechDetectionQueue;
 	}
 
-	public ConcurrentLinkedQueue<TimedAudioBuffer> getNoiseDetectionQueue() {
-		return noiseDetectionQueue;
+	public ConcurrentLinkedQueue<InterestingEvent> getStorageMessageQueue() {
+		return storageMessageQueue;
 	}
+
 
 	public ConcurrentLinkedQueue<Transcription> getNlpMessageQueue() {
 		return nlpMessageQueue;
