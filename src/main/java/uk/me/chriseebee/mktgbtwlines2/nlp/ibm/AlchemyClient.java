@@ -22,8 +22,7 @@ public class AlchemyClient {
 	public AlchemyClient() throws ConfigurationException {
 		AppConfig ac = null; 
 		try {
-			ConfigLoader cl = ConfigLoader.getConfigLoader();
-			ac = cl.getConfig();
+			ac = ConfigLoader.getConfig();
 			
 			if (ac.getWatsonKeys().get("apiKey")!=null) {
 				al = new AlchemyLanguage(ac.getWatsonKeys().get("apiKey"));

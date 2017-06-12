@@ -104,7 +104,7 @@ public class NamedEntityManager {
 	public String isWordRecognized(String lookup) {
 		
 		/* TODO
-		 This will have to change to addomodate a lookup of unique words in Orient
+		 This will have to change to accomodate a lookup of unique words in Orient
 		 In Orient we will need to index all names of entities into a list similar to this memory list
 		 so that we can call that instead of this local code.
 		 

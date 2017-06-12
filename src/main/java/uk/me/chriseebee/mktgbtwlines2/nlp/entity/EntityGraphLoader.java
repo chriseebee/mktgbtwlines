@@ -67,7 +67,11 @@ public class EntityGraphLoader {
 		try {
 			egl = new EntityGraphLoader();
 			
-			egl.loadEntityHierarchyFromFile(true);
+			if (args[0].equals("TEST")) {
+				egl.loadEntityHierarchyFromFile(true);
+			} else {
+				egl.loadEntityHierarchyFromFile(false);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

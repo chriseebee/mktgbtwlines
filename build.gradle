@@ -1,15 +1,24 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
+    }
+}
+
 plugins { 
   id "de.undercouch.download" version "3.1.1"
   id "com.google.osdetector" version "1.4.0"
   id "org.flywaydb.flyway" version "4.0.3"
+  id 'com.github.johnrengelman.shadow' version '2.0.0'
+  id 'java'
+  id 'maven'
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
 apply plugin: 'com.google.osdetector'
 apply plugin: 'application'
 apply plugin: 'de.undercouch.download'
-apply plugin: 'scala'
 
 group = 'uk.me.chriseebee'
 version = '0.0.1-SNAPSHOT'
@@ -22,12 +31,6 @@ targetCompatibility = 1.8
 
 def nlpJarName = 'stanford-english-corenlp-2016-01-10-models.jar'
 def googleSpeechJarName = 'grpc-sample-1.0.jar'
-
-
-flyway {
-    url = 'jdbc:h2:file:~/myh2'
-    user = 'sa'
-}
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
@@ -46,21 +49,11 @@ sourceSets {
 	}
 }
 
-dependencies {
-  compile 'org.scala-lang:scala-library-all:2.12.2'
-}
-
-tasks.withType(ScalaCompile) {
-  ScalaCompileOptions.metaClass.daemonServer = true
-  ScalaCompileOptions.metaClass.fork = true
-  ScalaCompileOptions.metaClass.useAnt = false
-  ScalaCompileOptions.metaClass.useCompileDaemon = false
+shadowJar {
+  mergeServiceFiles()
 }
 
 dependencies {
-	compile group: 'com.typesafe.akka', name: 'akka-actor_2.12', version: '2.5.2'
-	compile group: 'com.typesafe.akka', name: 'akka-remote_2.12', version: '2.5.2'
-    compile group: 'org.scala-lang', name: 'scala-library-all', version: '2.12.2'
 	compile group: 'com.google.guava', name: 'guava', version: '20.0'
 	compile group: 'com.google.cloud', name: 'google-cloud-speech', version: '0.8.3-alpha'
 	compile group: 'com.google.truth', name: 'truth', version: '0.32'
@@ -88,14 +81,14 @@ dependencies {
     compile group: 'com.google.auth', name: 'google-auth-library-credentials', version: '0.6.0'
     compile group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '0.6.0'
     compile files('libs/grpc-sample-1.0.jar')
-    compile files('libs/stanford-english-corenlp-2016-01-10-models.jar')
+    //compile files('libs/stanford-english-corenlp-2016-01-10-models.jar')
 	compile group: 'com.h2database', name: 'h2', version: '1.4.194'
 	compile group: 'com.orientechnologies', name: 'orientdb-core', version: '2.2.17'
 	compile group: 'com.orientechnologies', name: 'orientdb-client', version: '2.2.17'
 	compile group: 'com.orientechnologies', name: 'orientdb-jdbc', version: '2.2.17'
 	compile group: 'com.tinkerpop.blueprints', name: 'blueprints-core', version: '2.6.0'
 	compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version: '2.2.17'
-	compile group: 'com.orientechnologies', name: 'orientdb-enterprise', version: '2.1.25'
+	//compile group: 'com.orientechnologies', name: 'orientdb-enterprise', version: '2.1.25'
 	compile 'com.rabbitmq:amqp-client:4.1.0'
     testCompile group: 'junit', name: 'junit', version:'4.12'
     testCompile group: 'commons-io', name: 'commons-io', version:'2.4'

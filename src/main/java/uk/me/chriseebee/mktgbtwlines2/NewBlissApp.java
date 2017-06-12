@@ -33,7 +33,7 @@ public class NewBlissApp {
 	private Thread t6 = null;
 			
 	public NewBlissApp(String filePath) throws Exception {
-		ConfigLoader.getConfigLoader(filePath);
+		ConfigLoader.getConfig(filePath);
 	}
 
 	public void init() throws Exception {

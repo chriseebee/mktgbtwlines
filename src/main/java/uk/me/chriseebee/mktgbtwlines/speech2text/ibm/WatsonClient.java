@@ -279,7 +279,5 @@ public class WatsonClient {
 		return response;
 	}
 	
-	
-	
 }
 

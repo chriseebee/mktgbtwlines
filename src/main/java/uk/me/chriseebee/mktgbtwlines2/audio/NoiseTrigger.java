@@ -45,18 +45,17 @@ public class NoiseTrigger extends Thread {
     	this.mic = mic;
 		AppConfig ac = null; 
 		try {
-			ConfigLoader cl = ConfigLoader.getConfigLoader();
-			ac = cl.getConfig();
+			ac = ConfigLoader.getConfig();
+			
+			THRESHOLD = new Integer(ac.getAudioOptions().get("triggerThreshold")).intValue();
+			
+	    	au = new AudioUtils();
+	    	au.setupRecording();
+	    	
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("BIG ERROR LOADING CONFIG",e);
-		}
-		
-		THRESHOLD = new Integer(ac.getAudioOptions().get("triggerThreshold")).intValue();
-		
-    	au = new AudioUtils();
-    	au.setupRecording();
-    	
+		}	
     }
     
     /**

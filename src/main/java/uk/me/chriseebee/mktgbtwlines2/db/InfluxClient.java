@@ -32,10 +32,13 @@ public class InfluxClient {
 		AppConfig ac = null;
 		try {
 			ac = ConfigLoader.getConfig();
-			influxHostname = ac.getInfluxParams().get("hostname");
-			username = ac.getInfluxParams().get("username");
-			password = ac.getInfluxParams().get("password");
-			
+			if (ac.getInfluxParams()!=null) {
+				influxHostname = ac.getInfluxParams().get("hostname");
+				username = ac.getInfluxParams().get("username");
+				password = ac.getInfluxParams().get("password");
+			} else {
+				throw new ConfigurationException ("InfluxParams were null");
+			}
 	    	try {
 				obj = new URL(POST_URL.replace("SERVER", influxHostname));
 			} catch (MalformedURLException e) {

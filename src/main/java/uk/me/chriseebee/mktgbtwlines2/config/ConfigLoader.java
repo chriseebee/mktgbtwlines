@@ -29,7 +29,8 @@ public class ConfigLoader {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		logger.debug("Mapper created");
 		try {
-			Reader r = new FileReader(new File(resourceName));
+			File f  = new File("./"+DEFAULT_CONFIG_FILE);
+			Reader r = new FileReader(f);
 			logger.debug("Reader created");
 			config = mapper.readValue(r, AppConfig.class);
 			logger.debug("Config created");

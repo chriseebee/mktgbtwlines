@@ -1,7 +1,5 @@
 package uk.me.chriseebee.mktgbtwlines2.db;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Iterator;
 
 import org.slf4j.Logger;
@@ -18,6 +16,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import uk.me.chriseebee.mktgbtwlines2.AvailabilityException;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;
+import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 
 /* 
@@ -40,35 +39,40 @@ public class OrientClient {
 	OrientGraph graph = null;
 	ODatabaseDocumentTx docDb = null;
 	
+	@SuppressWarnings("resource")
 	public OrientClient() throws ConfigurationException, AvailabilityException {
 		
-		ConfigLoader cl = null;
+		AppConfig ac = null;
 		String hostname = null;
 		String username = null;
 		String password = null;
 		String database = null;
 		
 		try {
-			cl = ConfigLoader.getConfigLoader();
-			hostname = cl.getConfig().getOrientParams().get("hostname");
-			username = cl.getConfig().getOrientParams().get("username");
-			password = cl.getConfig().getOrientParams().get("password");
-			database = cl.getConfig().getOrientParams().get("database");
+			ac = ConfigLoader.getConfig();
+			hostname = ac.getOrientParams().get("hostname");
+			username = ac.getOrientParams().get("username");
+			password = ac.getOrientParams().get("password");
+			database = ac.getOrientParams().get("database");
+			
+			String connectionString = String.format("remote:%s/%s",hostname,database);
+			
+			OrientGraphFactory factory = new OrientGraphFactory(connectionString).setupPool(1,10);
+			
+			// EVERY TIME YOU NEED A GRAPH INSTANCE
+			graph = factory.getTx();
+			
+			docDb = new ODatabaseDocumentTx(connectionString).open(username,password);
 			
 		} catch( ConfigurationException ce) {
 			logger.error("Failed to get Configuration for OrientDB",ce);
 			throw ce;
 		} 
 		
-		String connectionString = String.format("remote:%s/%s",hostname,database);
-		
-		OrientGraphFactory factory = new OrientGraphFactory(connectionString).setupPool(1,10);
-		
-		// EVERY TIME YOU NEED A GRAPH INSTANCE
-		graph = factory.getTx();
-		
-		docDb = new ODatabaseDocumentTx(connectionString).open(username,password);
-
+	}
+	
+	public void closeConnection() {
+		docDb.close();
 	}
 	
 	public OrientGraph getGraph() {
