@@ -29,32 +29,47 @@ import uk.me.chriseebee.mktgbtwlines2.nlp.ibm.AlchemyClient;
 
 public class NLPPipeline {
 
-	Logger logger = LoggerFactory.getLogger(NLPPipeline.class);
-	Properties props = null;
-	StanfordCoreNLP pipeline = null;
+	static Logger logger = LoggerFactory.getLogger(NLPPipeline.class);
+	static Properties props = null;
+	static StanfordCoreNLP pipeline = null;
 	WatsonClient wc = null;
 	NamedEntityManager nem = null;
 
-	public NLPPipeline() {
+	public static void setup() {
 		try {
 			logger.info("Setting up 1");
 			props = new Properties();
-			// props.setProperty("annotators", "tokenize, ssplit, pos, lemma,
-			// ner, parse, dcoref, sentiment");
 			logger.info("Setting up 2");
 			props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse");
+			props.setProperty("annotators", "tokenize,ssplit,parse,truecase,pos,lemma,depparse,ner,regexner,natlog,openie,entitymentions");
+		    props.setProperty("pos.model","edu/stanford/nlp/models/pos-tagger/english-caseless-left3words-distsim.tagger");
+		    props.setProperty("parse.model","edu/stanford/nlp/models/lexparser/englishPCFG.caseless.ser.gz");
+		    props.setProperty("ner.model","edu/stanford/nlp/models/ner/english.all.3class.caseless.distsim.crf.ser.gz,edu/stanford/nlp/models/ner/english.muc.7class.caseless.distsim.crf.ser.gz,edu/stanford/nlp/models/ner/english.conll.4class.caseless.distsim.crf.ser.gz");
+		    props.setProperty("truecase.overwriteText","true");
+		    //props.setProperty("openie.affinity_probability_cap","0.1");
+		    //props.setProperty("openie.triple.all_nominals","true");
+		    props.setProperty("regexner.mapping", "/Users/cbell/Documents/java_workspace/mktgbtwlines2/src/test/resources/regexner.txt");
+		    //props.setProperty("regexner.mapping", "resources/regexner.txt");
+			    
+			    
 			logger.info("Setting up 3");
 			pipeline = new StanfordCoreNLP(props);
 			logger.info("Setting up 4");
-			wc = new WatsonClient();
+			WatsonClient.setup();
 			logger.info("Setting up 5");
-			nem = new NamedEntityManager();
+			NamedEntityManager.setup();
 		} catch (ConfigurationException e) {
 			logger.error("Cannot setup NLPPipeline", e);
 		}
 
 	}
 
+	public static StanfordCoreNLP getPipeline() {
+		if (pipeline==null) {
+			NLPPipeline.setup();
+		}
+		return pipeline;
+	}
 	/**
 	 * 
 	 * @param chunk
@@ -84,7 +99,7 @@ public class NLPPipeline {
 			
 			logger.debug(sentence.toString());
 			
-			AnalysisResults ar = wc.getEntities(sentence.toString());
+			AnalysisResults ar = wc.process(sentence.toString(),null);
 			List<InterestingEvent> ieList = wc.mapEntities(ar);
 			
 			String sentenceCategory = ieList.get(0).getEntity().getCategory();
@@ -96,7 +111,7 @@ public class NLPPipeline {
 			
 			removeKnownEntitiesFromSentence(sentence.toString(),words, ieList);
 
-			// Find intent words in the sentence and return as comma separated
+			// TODO: Replace with a classifier
 			String intents = nem.getIntents(words);
 
 			// traversing the words in the current sentence
@@ -169,7 +184,6 @@ public class NLPPipeline {
 		}
 	}
 	
-
 	void removeKnownEntitiesFromSentence(String sentence, List<CoreLabel> words, List<InterestingEvent> ieList) {
 		
 		List<String> strings = words.stream()

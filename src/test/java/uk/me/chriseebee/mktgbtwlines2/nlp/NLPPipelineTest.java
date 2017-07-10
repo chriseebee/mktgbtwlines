@@ -30,8 +30,9 @@ public class NLPPipelineTest {
 	
 	@BeforeClass
 	public static void setup() {
-		ConfigLoader.getConfigLoader("config.yml");
+		
 		try {
+			ConfigLoader.getConfig();
 			pipe = new NLPPipeline();
 		} catch (Exception e) {
 			e.printStackTrace();

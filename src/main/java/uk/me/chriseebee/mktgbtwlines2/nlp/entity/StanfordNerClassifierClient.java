@@ -37,7 +37,7 @@ import java.util.List;
  *  @author Jenny Finkel
  *  @author Christopher Manning
  */
-public class StanfordNerClient {
+public class StanfordNerClassifierClient {
 
     String[] example = {"Good afternoon Rajat Raina, how are you today?",
     "I go to school at Stanford University, which is located in California." };
@@ -46,7 +46,7 @@ public class StanfordNerClient {
     
     AbstractSequenceClassifier<CoreLabel> classifier = null;
     
-	public StanfordNerClient() {
+	public StanfordNerClassifierClient() {
       try {
 		classifier = CRFClassifier.getClassifier(serializedClassifier);
 	} catch (ClassCastException | ClassNotFoundException | IOException e) {

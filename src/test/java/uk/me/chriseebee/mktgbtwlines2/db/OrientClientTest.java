@@ -31,8 +31,8 @@ public class OrientClientTest {
 		}
 		
 		try {
-		    ic.putVertex("Person", "Harry Sykes");
-		    ic.putVertex("Person", "Harry Smith");
+		    ic.putVertex("Person", "Harry Sykes",true);
+		    ic.putVertex("Person", "Harry Smith",true);
 		} catch (StorageException e) {
 			e.printStackTrace();
 			fail();

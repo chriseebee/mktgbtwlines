@@ -11,14 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.Sentence;
 import uk.me.chriseebee.mktgbtwlines2.Utils;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 
 
 public class NamedEntityManager {
 	
-	Logger logger = LoggerFactory.getLogger(NamedEntityManager.class);
+	static Logger logger = LoggerFactory.getLogger(NamedEntityManager.class);
 	
 	public static String PRODUCT_TYPE = "P";
 	public static String BRAND_TYPE = "B";
@@ -31,44 +30,46 @@ public class NamedEntityManager {
 	
 	private static String INTENTS = "/intents.txt";
 	
-	private List<String> products = new ArrayList<String>();
-	private List<String> brands = new ArrayList<String>();
-	private List<String> productsFull = new ArrayList<String>();
-	private List<String> brandsFull = new ArrayList<String>();
-	private List<String> intents = new ArrayList<String>();
+	private static List<String> products = new ArrayList<String>();
+	private static List<String> brands = new ArrayList<String>();
+	private static List<String> productsFull = new ArrayList<String>();
+	private static List<String> brandsFull = new ArrayList<String>();
+	private static List<String> intents = new ArrayList<String>();
 	
 	//DB db = null;
 
-	public NamedEntityManager() {
+	public static void setup() {
 		
 		//db = DBMaker.memoryDB().make();
 		
-		Utils.getLines(PRODUCTS, products);
-		Utils.getLines(PRODUCTS_FULL, productsFull);
-		Utils.getLines(BRANDS, brands);
-		Utils.getLines(BRANDS_FULL, brandsFull);
-		Utils.getLines(INTENTS, intents);
-		
-		logger.info("Product Count = "+products.size() );
-		logger.info("Intent Count = "+intents.size() );
+		if (products.size()==0) {
+			Utils.getLines(PRODUCTS, products);
+			Utils.getLines(PRODUCTS_FULL, productsFull);
+			Utils.getLines(BRANDS, brands);
+			Utils.getLines(BRANDS_FULL, brandsFull);
+			Utils.getLines(INTENTS, intents);
+			
+			logger.info("Product Count = "+products.size() );
+			logger.info("Intent Count = "+intents.size() );
+		}
 	}
 	
 	
 	
-	public List<String> getIntents() {
+	public static List<String> getIntents() {
 		return intents;
 	}
 	
-	public int getProductCount() {
+	public static int getProductCount() {
 		return products.size(); 
 	}
 	
 	
-	public int getBrandCount() {
+	public static int getBrandCount() {
 		return brands.size();
 	}
 	
-	public String getIntents(List<CoreLabel> words) {
+	public static String getIntents(List<CoreLabel> words) {
 		
 		List<String> matches = new ArrayList<String>();
 		
@@ -88,7 +89,7 @@ public class NamedEntityManager {
 		return csv;
 	}
 	
-	public int getIndexOf(String type, String lookup) {
+	public static int getIndexOf(String type, String lookup) {
 		int returnVal = -1;
 		if (type.equals(PRODUCT_TYPE)) {
 			returnVal = products.indexOf(lookup.toLowerCase());
@@ -101,7 +102,8 @@ public class NamedEntityManager {
 		return returnVal;
 	}
 	
-	public String isWordRecognized(String lookup) {
+
+	public static String isWordRecognized(String lookup) {
 		
 		/* TODO
 		 This will have to change to accomodate a lookup of unique words in Orient
@@ -124,7 +126,7 @@ public class NamedEntityManager {
 		return null;
 	}
 	
-	public String isWordRecognized(String lookup, String nounType) {
+	public static String isWordRecognized(String lookup, String nounType) {
 		// first lets check the brand list
 		if (nounType==null || nounType.equals(BRAND_TYPE)) {
 			if (brands.indexOf(lookup.toLowerCase())>0) {
@@ -143,7 +145,7 @@ public class NamedEntityManager {
 		return null;
 	}
 	
-	public String isPhraseRecognized(String lookup, String nounType) {
+	public static String isPhraseRecognized(String lookup, String nounType) {
 		// first lets check the brand list
 		if (nounType==null || nounType.equals(BRAND_TYPE)) {
 			if (brandsFull.indexOf(lookup.toLowerCase())>0) {

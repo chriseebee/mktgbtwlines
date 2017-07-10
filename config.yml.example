@@ -11,5 +11,7 @@ googleKeys:
   password: your_google_password
 witKeys:
   bearerToken: your_wit_api_bearer_token
+dandelionKeys:
+  apiKey: XXX
 audioOptions:
   triggerThreshold: 20

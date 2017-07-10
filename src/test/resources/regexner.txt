@@ -1,0 +1,3 @@
+Labor	ORGANIZATION
+Insurance Company 	ORG_TYPE
+restaurant	ORG_TYPE

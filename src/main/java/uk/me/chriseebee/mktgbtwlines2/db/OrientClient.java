@@ -104,12 +104,12 @@ public class OrientClient {
 		 // 1. Add or get the vertex for the Actor
 		 // 2. Add or get the vertex for the Entity and one for the entity group if missing
 		 // 3. Add an edge for the intent between actor and entity (add sentiment score to edge attribute)
-		 Vertex v1 = putVertex("Person",ev.getActorName());
-		 Vertex v2 = putVertex("Entity",ev.getEntity().getName());
-		 Vertex v3 = putVertex("Entity",ev.getEntity().getType());
+		 Vertex v1 = putVertex("Person",ev.getActorName(),true);
+		 Vertex v2 = putVertex("Entity",ev.getEntity().getName(),true);
+		 Vertex v3 = putVertex("Entity",ev.getEntity().getType(),true);
 		 
-		 putEdge(v1,v2,"Mention",ev.getIntent(),ev.getSentiment());
-		 putEdge(v3,v2,"Child",null,null);
+		 putEdge(v1,v2,"Mention",ev.getIntent(),ev.getSentiment(),true);
+		 putEdge(v3,v2,"Child",null,null,true);
 		 
 		 // Log the raw event for more detailed analysis
 		 ODocument doc = createDocument("InterestingEvent");
@@ -124,7 +124,7 @@ public class OrientClient {
 		 
 	 }
 	 
-	 public Vertex putVertex(String vertexClassName, String vertexName) throws StorageException {
+	 public Vertex putVertex(String vertexClassName, String vertexName, boolean updateCounter) throws StorageException {
 		// put a vertex in the graph
 		 logger.debug("Finding vertices with name = "+vertexName);
 		 Iterable<Vertex> iterable = graph.getVertices("name", vertexName);
@@ -132,7 +132,9 @@ public class OrientClient {
 		 
 		 int iterCount=0;
 		 Iterator<Vertex> iter = iterable.iterator();
+		 boolean alreadyExists = iter.hasNext();
 		 // iter should only ever be of size = 1
+		 
 		 
 		 while (iter.hasNext()) {
 			iterCount++;
@@ -141,8 +143,10 @@ public class OrientClient {
 		    	int c0 = ((Integer)v.getProperty("counter")).intValue();
 		    	logger.debug("Found a vertex, with existing counter : "+c0);
 		    	c0++;
-		    	logger.debug("Updating counter to : "+new Integer(c0).toString());
-		    	v.setProperty( "counter",new Integer(c0));
+		    	if (updateCounter) {
+		    		logger.debug("Updating counter to : "+new Integer(c0).toString());
+		    		v.setProperty( "counter",new Integer(c0));
+		    	}
 				  graph.commit();
 			} catch( Exception e ) {
 				  graph.rollback();
@@ -150,8 +154,9 @@ public class OrientClient {
 				  throw new StorageException ("Could not update an existing graph node: "+vertexName);
 			}
 		 }
+	
 
-		if (iterCount==0) {
+		if (!alreadyExists) {
 			// create the Vertex
 			logger.debug(" - Creating a new vertex with name - "+vertexName);
 		    try {
@@ -168,36 +173,66 @@ public class OrientClient {
 		    
 	 }
 	 
-	 public void putEdge(Vertex outV, Vertex inV, String edgeClassName, String edgeName, Double sentiment) {
+	 /**
+	  * 
+	  * @param outV
+	  * @param inV
+	  * @param edgeClassName
+	  * @param edgeName
+	  * @param sentiment
+	  * @param updateCounter
+	  * @throws StorageException
+	  */
+	 public void putEdge(Vertex outV, Vertex inV, String edgeClassName, String edgeName, Double sentiment, boolean updateCounter) throws StorageException {
 		 // when we put an edge in we need to iterate the usage counter if it 
 		 // already exists, then put a timeout on the counter in a queue 
 		 
+		 logger.debug("Putting Edge");
 		 Edge e = null;
 		 Iterable<Edge> iterable = outV.getEdges(Direction.OUT,new String[0]);
 		 Iterator<Edge> iter = iterable.iterator();
 		 
+		 boolean alreadyExists = iter.hasNext();
 		 boolean updated = false;
 		 
+		 logger.debug(" - Edge already exists = "+ (alreadyExists ? "Y" : "F"));
+		 
 		 // iter should only ever be of size = 1
-		 while (iter.hasNext()) {
-			e = (Edge) iter.next();
-			if (e.getVertex(Direction.IN).equals(inV)) {
-			    try {
-			    	if (sentiment != null) {
-					  e.setProperty( "sentiment", (new Double(e.getProperty("sentiment")).doubleValue())+sentiment);
-			    	}
-			    	  int c2 = new Integer(e.getProperty("counter")).intValue()+1;
-					  e.setProperty( "counter", new Integer(c2));
-					  graph.commit();
-					  updated = true;
-				} catch( Exception e2 ) {
-					  graph.rollback();
+		 if (!updated) {
+			 while (iter.hasNext()) {
+				 
+				 
+				e = (Edge) iter.next();
+				
+				logger.debug(" - Edge ID = "+ e.getId());
+				if (e.getVertex(Direction.IN).equals(inV)) {
+					
+					alreadyExists = true;
+				    try {
+				    	if (sentiment != null) {
+						  e.setProperty( "sentiment", (new Double(e.getProperty("sentiment")).doubleValue())+sentiment);
+				    	}
+				    	
+				    	int c2 = ((Integer)e.getProperty("counter")).intValue();
+				    	c2++;
+				    	 
+				    	  if (updateCounter) {
+				    		  e.setProperty( "counter", new Integer(c2));
+				    		  graph.commit();
+				    	}
+					updated = true;
+					} catch( Exception e2 ) {
+						  graph.rollback();
+						  logger.error("Could not update edge",e2);
+						  throw new StorageException("Could not update edge in Graph");
+					}
 				}
-			}
+			 }
 		 }
 		 
-		if (!updated) {
+		if (!alreadyExists) {
 		    try {
+		    	  logger.debug("   - Trying to insert Edge");
 				  e = graph.addEdge("class:"+edgeClassName, outV, inV, edgeName);
 				  if (sentiment != null) {
 					  e.setProperty( "sentiment", sentiment);
@@ -206,6 +241,8 @@ public class OrientClient {
 				  graph.commit();
 			} catch( Exception e3 ) {
 				  graph.rollback();
+				  logger.error("Could not insert edge",e3);
+				  throw new StorageException("Could not insert edge in Graph");
 			}
 		}
 	 }

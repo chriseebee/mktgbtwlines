@@ -36,14 +36,13 @@ import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;
 import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
-import uk.me.chriseebee.mktgbtwlines2.nlp.entity.StanfordNerClient;
+import uk.me.chriseebee.mktgbtwlines2.nlp.NLPPipeline;
+import uk.me.chriseebee.mktgbtwlines2.nlp.entity.StanfordNerClassifierClient;
 import uk.me.chriseebee.mktgbtwlines2.nlp.ibm.AlchemyClient;
 
 public class WatsonClientTest {
 	
 	Logger logger = LoggerFactory.getLogger(WatsonClientTest.class);
-	
-	WatsonClient wc = null;
 	
 	String text = "This is a sentence about handbags and cars owned by Chris Bell and bought from Prada and BMW. This sentence is about tables and a chair that I got from Heals which has a nice vase on top which i got from  a guy called Roger in Manchester, which is made by Denby.";
 	Annotation document = null;
@@ -52,12 +51,11 @@ public class WatsonClientTest {
 	@Before
 	public void setup() {
 		
-		Properties props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse");
-		pipeline = new StanfordCoreNLP(props);
+		NLPPipeline.setup();
+		pipeline = NLPPipeline.getPipeline();
 		
 		try {
-			wc = new WatsonClient();
+			WatsonClient.setup();
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 			fail();
@@ -308,10 +306,10 @@ public class WatsonClientTest {
 			logger.info("Sentence: "+sentence);
 			
 			System.out.println(sentence);
-			AnalysisResults ar = wc.getEntities(sentence.toString());
+			AnalysisResults ar = WatsonClient.process(sentence.toString());
 			List<InterestingEvent> ieList = null;
 			try {
-				ieList = wc.mapEntities(ar);
+				ieList = WatsonClient.mapEntities(ar);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

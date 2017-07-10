@@ -10,7 +10,14 @@ public class AppConfig {
 	private Map<String, String> witKeys;
 	private Map<String, String> audioOptions;
 	private Map<String, String> audioClipStorageOptions;
+	private Map<String, String> dandelionKeys;
 	
+	public Map<String, String> getDandelionKeys() {
+		return dandelionKeys;
+	}
+	public void setDandelionKeys(Map<String, String> dandelionKeys) {
+		this.dandelionKeys = dandelionKeys;
+	}
 	public Map<String, String> getWatsonKeys() {
 		return watsonKeys;
 	}

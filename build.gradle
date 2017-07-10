@@ -29,7 +29,7 @@ mainClassName="uk.me.chriseebee.mktgbtwlines2.NewBlissApp"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def nlpJarName = 'stanford-english-corenlp-2016-01-10-models.jar'
+def nlpJarName = 'stanford-english-corenlp-2017-06-09-models.jar'
 def googleSpeechJarName = 'grpc-sample-1.0.jar'
 
 tasks.withType(JavaCompile) {
@@ -56,19 +56,23 @@ shadowJar {
 dependencies {
 	compile group: 'com.google.guava', name: 'guava', version: '20.0'
 	compile group: 'com.google.cloud', name: 'google-cloud-speech', version: '0.8.3-alpha'
+	compile group: 'com.google.cloud.samples', name: 'shared-configuration', version: '1.0.0'
 	compile group: 'com.google.truth', name: 'truth', version: '0.32'
+	compile group: 'com.google.auth', name: 'google-auth-library-credentials', version: '0.6.0'
+    compile group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '0.6.0'
+    compile group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '0.6.0'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version:'2.8.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.8.1'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version:'2.8.1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version:'2.8.1'
     compile group: 'com.ibm.watson.developer_cloud', name: 'java-sdk', version:'3.8.0'
-    'com.ibm.watson.developer_cloud:natural-language-understanding:3.8.0'
+    compile group: 'com.ibm.watson.developer_cloud', name: 'natural-language-understanding', version:'3.8.0'
     compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.25'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.25'
     compile group: 'commons-cli', name: 'commons-cli', version:'1.3.1'
     compile group: 'io.grpc', name: 'grpc-all', version:'1.0.3'
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version:'1.1.1'
-    compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version:'3.6.0'
+    compile group: 'edu.stanford.nlp', name: 'stanford-corenlp', version:'3.8.0'
     compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
     compile group: 'org.apache.commons', name: 'commons-collections4', version:'4.1'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.3.6'
@@ -78,10 +82,9 @@ dependencies {
     compile group: 'com.mashape.unirest', name: 'unirest-java', version:'1.4.9'
     compile group: 'io.netty', name: 'netty-tcnative-boringssl-static', version:'1.1.33.Fork20', classifier:osdetector.classifier
     compile group: 'org.xerial', name: 'sqlite-jdbc', version:'3.8.11.2'
-    compile group: 'com.google.auth', name: 'google-auth-library-credentials', version: '0.6.0'
-    compile group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '0.6.0'
+	compile files('libs/semantics-0.0.1-SNAPSHOT-jar-with-dependencies.jar')
     compile files('libs/grpc-sample-1.0.jar')
-    //compile files('libs/stanford-english-corenlp-2016-01-10-models.jar')
+    compile files('libs/stanford-english-corenlp-2017-06-09-models.jar')
 	compile group: 'com.h2database', name: 'h2', version: '1.4.194'
 	compile group: 'com.orientechnologies', name: 'orientdb-core', version: '2.2.17'
 	compile group: 'com.orientechnologies', name: 'orientdb-client', version: '2.2.17'

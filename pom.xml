@@ -111,7 +111,7 @@
 <dependency>
     <groupId>edu.stanford.nlp</groupId>
     <artifactId>stanford-corenlp</artifactId>
-    <version>3.6.0</version>
+    <version>3.8.0</version>
 </dependency>
 <dependency>
     <groupId>commons-codec</groupId>
@@ -121,7 +121,7 @@
 <dependency>
     <groupId>stanford</groupId>
     <artifactId>stanford-english-corenlp</artifactId>
-    <version>2016-01-10-models</version>
+    <version>2017-06-09-models</version>
 </dependency>
 
  <dependency>

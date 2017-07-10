@@ -24,6 +24,7 @@ import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;
 import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
+import uk.me.chriseebee.mktgbtwlines2.nlp.InfoExtractor;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 import uk.me.chriseebee.mktgbtwlines2.nlp.entity.Entity;
@@ -35,9 +36,17 @@ import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.An
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.AnalyzeOptions;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.CategoriesOptions;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.CategoriesResult;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.ConceptsOptions;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.ConceptsResult;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.EntitiesOptions;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.EntitiesResult;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.Features;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.KeywordsOptions;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.KeywordsResult;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationArgument;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationEntity;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationsOptions;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationsResult;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechModel;
@@ -48,22 +57,24 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeC
 
 public class WatsonClient {
 
-	Logger logger = LoggerFactory.getLogger(WatsonClient.class);
+	static Logger logger = LoggerFactory.getLogger(WatsonClient.class);
 	
-	private String username = null;
-	private String password = null;
-	private String nluUsername = null;
-	private String nluPassword = null;
+	private static String username = null;
+	private static String password = null;
+	private static String nluUsername = null;
+	private static String nluPassword = null;
 	
-	public WatsonClient() throws ConfigurationException {
-		AppConfig cl = ConfigLoader.getConfig();
-		username = cl.getWatsonKeys().get("username");
-		password = cl.getWatsonKeys().get("password");
-		nluUsername = cl.getWatsonKeys().get("nluUsername");
-		nluPassword = cl.getWatsonKeys().get("nluPassword");
+	public static void setup() throws ConfigurationException {
+		if (username==null) {
+			AppConfig cl = ConfigLoader.getConfig();
+			username = cl.getWatsonKeys().get("username");
+			password = cl.getWatsonKeys().get("password");
+			nluUsername = cl.getWatsonKeys().get("nluUsername");
+			nluPassword = cl.getWatsonKeys().get("nluPassword");
+		}
 	}
 	
-	public void processBuffers() {
+	public static void processBuffers() {
 		 SpeechToText service = new SpeechToText();
 		 service.setUsernameAndPassword(username, password);
 		    	
@@ -116,7 +127,7 @@ public class WatsonClient {
 		    System.out.println("Fin.");
 	}
 
-	public void processStream() {
+	public static void processStream() {
 		 SpeechToText service = new SpeechToText();
 		 service.setUsernameAndPassword(username, password);
 		    
@@ -193,7 +204,7 @@ public class WatsonClient {
 	/*
 	 * Self Contained Tester for file based processing
 	 */
-	public SpeechResults processFile(File f) {
+	public static SpeechResults processFile(File f) {
 	    SpeechToText service = new SpeechToText();
 	    service.setUsernameAndPassword(username, password);
 	    	
@@ -215,7 +226,7 @@ public class WatsonClient {
 	    return results;
 	}
 	
-	public List<InterestingEvent> mapEntities(AnalysisResults ar) {
+	public static List<InterestingEvent> mapEntities(AnalysisResults ar) {
 		
 		Map<String,InterestingEvent> eventList = Collections.synchronizedMap(new HashMap<String,InterestingEvent>());
 		
@@ -243,26 +254,52 @@ public class WatsonClient {
 		
 	}
 	
-	public AnalysisResults getEntities(String text) {
+	public static AnalysisResults process(String text, List<String> annotationList) {
 		
 		NaturalLanguageUnderstanding service = new NaturalLanguageUnderstanding(
 				  NaturalLanguageUnderstanding.VERSION_DATE_2017_02_27,
 				  nluUsername,
 				  nluPassword
 				);
-
-		CategoriesOptions categories = new CategoriesOptions();
 		
-		EntitiesOptions entitiesOptions = new EntitiesOptions.Builder()
-				  .emotion(false)
-				  .sentiment(true)
-				  .limit(10)
-				  .build();
+		Features.Builder builder = new Features.Builder();
 
-		Features features = new Features.Builder()
-		  .categories(categories)
-		  .entities(entitiesOptions)
-		  .build();
+		if (annotationList.contains(InfoExtractor.CATEGORY_ANNOTATION)) {
+			CategoriesOptions categories = new CategoriesOptions();
+			builder.categories(categories);
+		}
+		
+		if (annotationList.contains(InfoExtractor.CONCEPT_ANNOTATION)) {
+			ConceptsOptions.Builder cb = new ConceptsOptions.Builder();
+			cb.limit(new Integer(10));
+			ConceptsOptions conceptOptions = cb.build();
+			builder.concepts(conceptOptions);
+		}
+		
+		if (annotationList.contains(InfoExtractor.KEYWORD_ANNOTATION)) {
+			KeywordsOptions.Builder b = new KeywordsOptions.Builder();
+			b.limit(new Integer(10));
+			KeywordsOptions keywordoptions = b.build();
+			builder.keywords(keywordoptions);
+		}
+		
+		if (annotationList.contains(InfoExtractor.ENTITY_ANNOTATION)) {
+		
+			EntitiesOptions entitiesOptions = new EntitiesOptions.Builder()
+					  .emotion(false)
+					  .sentiment(true)
+					  .limit(10)
+					  .build();
+			builder.entities(entitiesOptions);
+		}
+
+		if (annotationList.contains(InfoExtractor.RELATION_ANNOTATION)) {
+			RelationsOptions.Builder rb= new RelationsOptions.Builder();
+			RelationsOptions relationsOptions = rb.build();
+			builder.relations(relationsOptions);
+		}
+
+		Features features = builder.build();
 
 		AnalyzeOptions parameters = new AnalyzeOptions.Builder()
 		  .text(text)
@@ -273,11 +310,58 @@ public class WatsonClient {
 		  .analyze(parameters)
 		  .execute();
 		
-		
-		System.out.println(response);
-		
 		return response;
 	}
+	
+	public static void printConfidentResults(AnalysisResults ar) {
+		
+		List<ConceptsResult> concepts = ar.getConcepts();
+	
+		for (ConceptsResult cr : concepts) {
+			if (cr.getRelevance()>0.01) {
+				System.out.println("CONCEPT: "+cr.getText() + "/" + cr.getRelevance());
+			}
+		}
+		
+		List<KeywordsResult> keywords = ar.getKeywords();
+		
+		for (KeywordsResult kr : keywords) {
+			if (kr.getRelevance()>0.01) {
+				System.out.println("KEYWORD: "+kr.getText() + "/" + kr.getRelevance());
+			}
+		}
+		
+		List<CategoriesResult> categories = ar.getCategories();
+		
+		for (CategoriesResult catr : categories) {
+			if (catr.getScore()>0.01) {
+				System.out.println("CATEGORY: "+catr.getLabel() + "/" + catr.getScore());
+			}
+		}
+		
+		
+		List<EntitiesResult> entities = ar.getEntities();
+		
+		for (EntitiesResult e : entities) {
+			if (e.getRelevance()>0.01) {
+				System.out.println("ENTITY: "+e.getText() + "/" + e.getType() + "/" + e.getRelevance());
+			}
+		}
+		
+		List<RelationsResult> relations = ar.getRelations();
+		
+		for (RelationsResult e : relations) {
+			if (e.getScore()>0.01) {
+				System.out.println("RELATION: "+e.getType() );
+				for (RelationArgument ra : e.getArguments()) {
+					RelationEntity re = ra.getEntities().get(0);
+					System.out.println(" - " + ra.getText() + "\t" + re.getText() + "\t" + re.getType());
+				}
+			}
+		}
+		
+	}
+	
 	
 }
 

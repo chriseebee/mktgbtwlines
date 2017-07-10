@@ -18,8 +18,10 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TrueCaseTextAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.pipeline.TrueCaseAnnotator;
 import edu.stanford.nlp.util.CoreMap;
 import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 
@@ -33,7 +35,7 @@ public class StanfordNerClientTest {
 	public void setup() {
 		
 		Properties props = new Properties();
-		props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse");
+		props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse, truecase");
 		pipeline = new StanfordCoreNLP(props);
 
 	}
@@ -89,7 +91,7 @@ public class StanfordNerClientTest {
 	@Test
 	public void test2lowercase() {
 		
-		String text = "These people, terry, gita, yingshun and mohammed, loved going to the Odeon cinema with Sady Smith and Harris";
+		String text = "These people, terry, gita, yingshun and mohammed, loved going to the manchester odeon cinema with Sady Smith and Harris, but they didn't go to carlisle";
 		Map<String, String> m = Collections.synchronizedMap(new HashMap<String, String>());
 		m.put("terry", "PERSON");
 		m.put("gita", "PERSON");
@@ -98,7 +100,9 @@ public class StanfordNerClientTest {
 		m.put("sady", "PERSON");
 		m.put("smith", "PERSON");
 		m.put("harris", "PERSON");
-		m.put("Odeon", "ORGANIZATION");
+		m.put("odeon", "ORGANIZATION");
+		m.put("carlisle", "LOCATION");
+		m.put("manchester", "LOCATION");
 		
 		double passRate = testSentences(text, m);
 		
@@ -119,7 +123,7 @@ public class StanfordNerClientTest {
 		
 		List<CoreMap> sentences = document.get(SentencesAnnotation.class);
 		
-		StanfordNerClient client = new StanfordNerClient();
+		StanfordNerClassifierClient client = new StanfordNerClassifierClient();
 		
 		for(CoreMap sentence: sentences) {
 			System.out.println(sentence);

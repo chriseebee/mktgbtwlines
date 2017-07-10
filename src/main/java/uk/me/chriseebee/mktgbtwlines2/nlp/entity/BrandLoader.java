@@ -1,7 +1,6 @@
 package uk.me.chriseebee.mktgbtwlines2.nlp.entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,16 +14,17 @@ import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;
 import uk.me.chriseebee.mktgbtwlines2.db.OrientClient;
 import uk.me.chriseebee.mktgbtwlines2.db.StorageException;
 
-public class EntityGraphLoader {
+
+public class BrandLoader {
+
+	Logger logger = LoggerFactory.getLogger(BrandLoader.class);
+	private static String BRANDS = "./ner_brands_full_name.txt";
 	
-	Logger logger = LoggerFactory.getLogger(EntityGraphLoader.class);
-	private static String ENTITIES = "./entity-hierarchy.txt";
-	
-	private List<String> entityList = new ArrayList<String>();
+	private List<String> brandList = new ArrayList<String>();
 	
 	private OrientClient oc = null;
 
-	public EntityGraphLoader() throws Exception {
+	public BrandLoader() throws Exception {
 		try {
 			oc = new OrientClient();
 		} catch (ConfigurationException | AvailabilityException e) {
@@ -33,41 +33,35 @@ public class EntityGraphLoader {
 		}
 	}
 	
-	
 	public void loadEntityHierarchyFromFile(boolean testMode) throws StorageException {
 		
-		Utils.getLines(ENTITIES, entityList );
+		Utils.getLines(BRANDS, brandList );
 		
-		for (String line: entityList) {
+		for (String line: brandList) {
+
 			if (testMode) {
-				logger.info("- ");
+				logger.debug("- "+line);
+			} else {
+				Vertex v1 = null;
+				try {
+					v1 = oc.putVertex("Brand",line.trim(),false);
+					if (v1!=null) {
+						logger.debug(" -- Vertex ID = "+v1.getId());
+						
+						
+						// now we need to call Watson NLU and get the category for that brand so we can join them up.
+						
+					} else {
+						logger.debug(" Vertex is null");
+					}
+					
+				} catch (StorageException e) {
+					e.printStackTrace();
+					throw e;
+				}
+
 			}
 			
-			Iterable<String> tokenIter = Arrays.asList(line.split("\\|"));
-			Vertex prevVertex = null;
-			for (String token : tokenIter) {
-				if (testMode) {
-					logger.info("- "+token);
-				} else {
-					Vertex v1 = null;
-					try {
-						v1 = oc.putVertex("Product",token.trim(),false);
-						if (v1!=null) {
-							logger.info(" -- Vertex ID = "+v1.getId());
-						} else {
-							logger.info(" Vertex is null");
-						}
-						
-					} catch (StorageException e) {
-						e.printStackTrace();
-						throw e;
-					}
-					if (prevVertex != null) {
-						oc.putEdge(v1,prevVertex,"Child","isChildOf",null,false);
-					}
-					prevVertex = v1;
-				}
-			}
 		}
 	}
 	
@@ -88,3 +82,4 @@ public class EntityGraphLoader {
 	}
 
 }
+
