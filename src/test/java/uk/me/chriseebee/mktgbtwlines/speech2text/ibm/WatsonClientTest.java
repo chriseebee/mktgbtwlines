@@ -306,7 +306,7 @@ public class WatsonClientTest {
 			logger.info("Sentence: "+sentence);
 			
 			System.out.println(sentence);
-			AnalysisResults ar = WatsonClient.process(sentence.toString());
+			AnalysisResults ar = WatsonClient.process(sentence.toString(),null);
 			List<InterestingEvent> ieList = null;
 			try {
 				ieList = WatsonClient.mapEntities(ar);

@@ -63,5 +63,4 @@ public class DandelionResultsItem {
 		this.title = title;
 	}
 	
-
 }

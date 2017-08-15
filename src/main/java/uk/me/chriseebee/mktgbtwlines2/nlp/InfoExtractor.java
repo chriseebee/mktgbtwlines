@@ -3,11 +3,16 @@ package uk.me.chriseebee.mktgbtwlines2.nlp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.collectingAndThen;
 
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
@@ -19,6 +24,7 @@ import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.Co
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.EntitiesResult;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.KeywordsResult;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationsResult;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.SemanticRolesResult;
 
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -65,14 +71,14 @@ public class InfoExtractor {
 		List<String> annotatorsList = Arrays.asList(annotators.split(","));
 		List<String> annotationsList = Arrays.asList(annotations.split(","));
 		
-		logger.info("---------------------");
-		logger.info(text);
-		logger.info("---------------------");
+		logger.debug("---------------------");
+		logger.debug(text);
 		
 		AnalysisResults combinedResults = new AnalysisResults();
+		combinedResults.setAnalyzedText(text);
 		
 		if (annotatorsList.contains(WATSON_ANNOTATOR)) {
-			logger.info(" - Running Watson");
+			logger.debug(" - Running Watson");
 			// Setup Watson Client
 			try {
 				WatsonClient.setup();
@@ -87,7 +93,7 @@ public class InfoExtractor {
 		}
 		
 		if (annotatorsList.contains(DANDELION_ANNOTATOR)) {
-			logger.info(" - Running Dandelion");
+			logger.debug(" - Running Dandelion");
 			try {
 				DandelionClient.setup();
 			} catch (ConfigurationException e1) {
@@ -96,12 +102,12 @@ public class InfoExtractor {
 			}
 		
 		    // first go and get info from Watson for this document
-		    AnalysisResults dandelionResults = WatsonClient.process(text,annotationsList);	
+		    AnalysisResults dandelionResults = DandelionClient.process(text,annotationsList);	
 		    mergeResults(combinedResults,dandelionResults);
 		}
 
 		if (annotatorsList.contains(STANFORD_ANNOTATOR)) {
-			logger.info(" - Running Stanford");
+			logger.debug(" - Running Stanford");
 			StanfordClient.setup();
 			AnalysisResults stanfordResults = StanfordClient.process(text);
 			mergeResults(combinedResults,stanfordResults);
@@ -113,48 +119,97 @@ public class InfoExtractor {
 	
 	private static AnalysisResults mergeResults (AnalysisResults master, AnalysisResults child) {
 		
+		List<CategoriesResult> cats = master.getCategories();
+		if (cats==null) {
+			cats = new ArrayList<CategoriesResult>();
+		}
 		if (child.getCategories()!=null) {
-			List<CategoriesResult> cats = master.getCategories();
-			if (cats==null) {
-				cats = new ArrayList<CategoriesResult>();
-			}
 			for (CategoriesResult cr : child.getCategories()) {
 				cats.add(cr);
-				master.setCategories(cats);
 			}
 		}
+		master.setCategories(cats);
 		
+		List<EntitiesResult> ents = master.getEntities();
+		if (ents==null) {
+			ents= new ArrayList<EntitiesResult>();
+		}
 		if (child.getEntities()!=null) {
-			List<EntitiesResult> ents = master.getEntities();
-			if (ents==null) {
-				ents= new ArrayList<EntitiesResult>();
-			}
 			for (EntitiesResult er: child.getEntities()) {
 				ents.add(er);
-				master.setEntities(ents);
 			}
+			
 		}
+		master.setEntities(ents);
 		
+		List<ConceptsResult> cons = master.getConcepts();
+		if (cons==null) {
+			cons= new ArrayList<ConceptsResult>();
+		}
 		if (child.getConcepts()!=null) {
 			for (ConceptsResult cor: child.getConcepts()) {
-				master.addconcepts(cor);
+				cons.add(cor);
 			}
 		}
+		master.setConcepts(cons);
 		
+		List<KeywordsResult> kews = master.getKeywords();
+		if (kews==null) {
+			kews= new ArrayList<KeywordsResult>();
+		}
 		if (child.getKeywords()!=null) {
 			for (KeywordsResult kr: child.getKeywords()) {
-				master.addkeywords(kr);
+				kews.add(kr);
 			}
 		}
+		master.setKeywords(kews);
 		
+		List<RelationsResult> rels = master.getRelations();
+		if (rels==null) {
+			rels= new ArrayList<RelationsResult>();
+		}
 		if (child.getRelations()!=null) {
 			for (RelationsResult rr: child.getRelations()) {
-				master.addrelations(rr);
+				rels.add(rr);
 			}
 		}
+		master.setRelations(rels);
+		
+		List<SemanticRolesResult> sro = master.getSemanticRoles();
+		if (sro==null) {
+			sro= new ArrayList<SemanticRolesResult>();
+		}
+		if (child.getSemanticRoles()!=null) {
+			for (SemanticRolesResult srr: child.getSemanticRoles()) {
+				sro.add(srr);
+			}
+		}
+		master.setSemanticRoles(sro);
 		
 		return master;
 		
+	}
+	
+	public AnalysisResults normaliseResults(AnalysisResults results) {
+		// Rules
+		
+		// 1. Remove duplicate entities, but we need to up the confidence of a repeat I think before we remove
+		
+		Comparator<EntitiesResult> byAllEntityItems = (e1, e2) -> (e1.getText()+":"+e1.getType()).compareToIgnoreCase(e2.getText()+";"+e2.getType());
+		List<EntitiesResult> uniqueEntities = results.getEntities().stream()
+                .collect(collectingAndThen(toCollection(() -> new TreeSet<>(byAllEntityItems)),
+                                           ArrayList::new));
+		results.setEntities(uniqueEntities);
+		
+		// 2. 
+		
+		// 3. Remove relations where a part of an entity name is referred to in the subject/object
+	
+	
+		// 4. Turn the relations into patterns, normalise them against a list of known patterns, thus removing the crud
+		
+		// Concern: How to prune relations without losing the right level of item
+		return results;
 	}
 	
 
@@ -198,11 +253,45 @@ public class InfoExtractor {
 //	    return "X";
 //	}
 //	
-//	public static boolean areStringsSemanticallySimilar(String a, String b, double confidenceLimit ) {		
-//
-//	    Compare c = new Compare(a,b);
-//	    return (c.getResult()>=confidenceLimit);
-//
-//	}
+	public static boolean areStringsSemanticallySimilar(String a, String b, double confidenceLimit, String annotators ) {		
+
+		List<String> annotatorsList = Arrays.asList(annotators.split(","));
+		
+		double localResult = -1;
+		
+		if (annotatorsList.contains("LOCAL")) {
+			Compare c = new Compare(a,b);
+			localResult = c.getResult();
+		}
+		
+		double dandelionResult = -1;
+		
+		if (annotatorsList.contains("DANDELION")) {
+			
+			try {
+				DandelionClient.setup();
+				dandelionResult = DandelionClient.getSimilarity(a, b);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			
+			}
+		}
+		
+		double combinedResult = 0;
+		// HACK ALERT
+	    if (localResult > 0 && dandelionResult >0 && annotatorsList.size()==2) {
+	    	combinedResult =(localResult + dandelionResult)/2;
+	    } else {
+	    	if (annotatorsList.get(0).equals("DANDELION")) { 
+	    		combinedResult = dandelionResult; 
+	    	}
+	    	if (annotatorsList.get(0).equals("LOCAL")) { 
+	    		combinedResult = localResult; 
+	    	}
+	    }
+
+	    return (combinedResult>=confidenceLimit);
+	}
 	
 }

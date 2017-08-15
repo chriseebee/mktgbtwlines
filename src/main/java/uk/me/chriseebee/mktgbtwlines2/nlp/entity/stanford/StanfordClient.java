@@ -1,5 +1,7 @@
 package uk.me.chriseebee.mktgbtwlines2.nlp.entity.stanford;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.AnalysisResults;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.ConceptsResult;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.EntitiesResult;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationArgument;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationEntity;
@@ -60,6 +63,9 @@ public class StanfordClient {
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	    }
+	    
+    	List<EntitiesResult> entities2 = new ArrayList<EntitiesResult>();
+		List<RelationsResult> relations = new ArrayList<RelationsResult>();
 
 
 	    // Loop over sentences in the document
@@ -69,8 +75,6 @@ public class StanfordClient {
 
 	    	List<CoreMap> mentions = sentence.get(MentionsAnnotation.class);
 	    
-	    	//sentence.get(key)
-	    
 	    	Map<String, String> entities = mentions.stream()
 	    		.collect(
 	    				Collectors.toMap(
@@ -79,17 +83,12 @@ public class StanfordClient {
 	    				);
 
 		    for (String e: entities.keySet()) {
-		    	logger.info("TOKEN/ENTITY = " + e + "/" + entities.get(e));
+		    	logger.debug("TOKEN/ENTITY = " + e + "/" + entities.get(e));
 		    	EntitiesResult er = new EntitiesResult();
 		    	er.setText(e);
 		    	er.setType(entities.get(e));
 		    	er.setRelevance(1.0);
-		    	try {
-		    		ar.addentities(er);
-		    	} catch (Exception ex) {
-		    		// assuming this would be thrown in case of dup
-		    		logger.debug("Duplicate Entity found in list");
-		    	}
+		    	entities2.add(er);
 		    }
 	    
 	      // Get the OpenIE triples for the sentence
@@ -98,7 +97,6 @@ public class StanfordClient {
 	      for (RelationTriple triple : triples) {
 	    	  
 	    	  RelationsResult rr = new RelationsResult();
-	    	  
 	    	  // Subject
 	    	  RelationEntity re_subj = new RelationEntity();
 	    	  re_subj.setText(triple.subjectGloss());
@@ -106,16 +104,8 @@ public class StanfordClient {
 	    		  re_subj.setType("NOUN_PHRASE");
 	    	  }
 	    	  RelationArgument ra_subj = new RelationArgument();
-	    	  ra_subj.addentities(re_subj);
+	    	  ra_subj.setEntities(new ArrayList<RelationEntity>(Arrays.asList(re_subj)));
 	    	  ra_subj.setText("SUBJECT");
-	    	  
-	    	  // Relation
-	    	  RelationEntity re_rel = new RelationEntity();
-	    	  re_rel.setText(triple.relationGloss());
-	
-	    	  RelationArgument ra_rel= new RelationArgument();
-	    	  ra_rel.addentities(re_rel);
-	    	  ra_rel.setText("RELATION");
 	    	  
 	    	  //Object
 	    	  RelationEntity re_obj = new RelationEntity();
@@ -124,41 +114,34 @@ public class StanfordClient {
 	    		  re_obj.setType("NOUN_PHRASE");
 	    	  }
 	    	  RelationArgument ra_obj = new RelationArgument();
-	    	  ra_obj.addentities(re_obj); 
+	    	  ra_obj.setEntities(new ArrayList<RelationEntity>(Arrays.asList(re_obj)));
 	    	  ra_obj.setText("OBJECT");
 	    	  
 	    	  // Finish
-	    	  rr.addarguments(ra_subj);
-	    	  rr.addarguments(ra_rel);
-	    	  rr.addarguments(ra_obj);
+	    	  rr.setArguments(new ArrayList<RelationArgument>(Arrays.asList(ra_subj,ra_obj)));
 	    	  rr.setScore(triple.confidence);
 	    	  
-	//        System.out.println(triple.confidence + "\t" +
-	//            triple.subjectGloss() + "\t" +
-	//            triple.relationGloss() + "\t" +
-	//            triple.objectGloss() + "\t" +
-	//            triple.confidence
-	//        	);
+	    	  String type = "";
+	    	  rr.setType(triple.relationGloss());
 	    	  
 		      // Is this relationship a negative one?
 		    	if (t != null) {
 			    	if (isNegation(t,new IndexedWord(triple.relationHead()))) {
-			    		logger.info("THIS IS A NEGATIVE SENTENCE");
-			    		rr.setType("NEGATIVE");
-			    	} else {
-			    		rr.setType("POSITIVE");
+			    		logger.debug("THIS IS A NEGATIVE SENTENCE");
+			    		// We are hacking this field for both positive/negative as well as source
+			    		type = "[NEGATION]";
 			    	}
 		    	} else {
-		    		logger.info("Tree is null");
-		    		
+		    		logger.debug("Tree is null");
 		    	}
 	        
-	    	  ar.addrelations(rr);
-	
+			    rr.setType(type + triple.relationGloss());
+			    relations.add(rr);
 	      }
 	    }
 	    
-      logger.info("+++++++++++++++++++++");
+	    ar.setRelations(relations);
+	    ar.setEntities(entities2);
       
       return ar;
 
@@ -181,10 +164,10 @@ public class StanfordClient {
 					.findFirst();
 		
 		if (foundNegation.isPresent()) {
-			logger.info("OK, we've found a negation, but it is related to the head word of the relation in question?");
+			logger.debug("OK, we've found a negation, but it is related to the head word of the relation in question?");
 
 			GrammaticalRelation gr = gs.getGrammaticalRelation(foundNegation.get().gov(), relationHead);
-			logger.info(gr.toPrettyString());
+			logger.debug(gr.toPrettyString());
 			return true;
 		} else {
 			return false;

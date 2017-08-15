@@ -57,11 +57,15 @@ public class NLPPipeline {
 			logger.info("Setting up 4");
 			WatsonClient.setup();
 			logger.info("Setting up 5");
-			NamedEntityManager.setup();
+
 		} catch (ConfigurationException e) {
 			logger.error("Cannot setup NLPPipeline", e);
 		}
 
+	}
+	
+	public static void setupLocalEntityManager() {
+		NamedEntityManager.setup();
 	}
 
 	public static StanfordCoreNLP getPipeline() {

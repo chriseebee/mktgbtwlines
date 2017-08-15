@@ -47,6 +47,8 @@ import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.Re
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationEntity;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationsOptions;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationsResult;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.SemanticRolesOptions;
+import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.SemanticRolesResult;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechModel;
@@ -124,7 +126,7 @@ public class WatsonClient {
 			    listenLoop++;
 	    	}
 
-		    System.out.println("Fin.");
+		    logger.info("Fin.");
 	}
 
 	public static void processStream() {
@@ -186,7 +188,7 @@ public class WatsonClient {
 			      }
 			    });
 
-			    System.out.println("Listening to your voice for the next 10s...");
+			    logger.info("Listening to your voice for the next 10s...");
 			    try {
 					Thread.sleep(10 * 1000);
 				} catch (InterruptedException e) {
@@ -256,6 +258,8 @@ public class WatsonClient {
 	
 	public static AnalysisResults process(String text, List<String> annotationList) {
 		
+		logger.info("Callng Watson NLU");
+		
 		NaturalLanguageUnderstanding service = new NaturalLanguageUnderstanding(
 				  NaturalLanguageUnderstanding.VERSION_DATE_2017_02_27,
 				  nluUsername,
@@ -297,6 +301,11 @@ public class WatsonClient {
 			RelationsOptions.Builder rb= new RelationsOptions.Builder();
 			RelationsOptions relationsOptions = rb.build();
 			builder.relations(relationsOptions);
+			
+			SemanticRolesOptions.Builder srob = new SemanticRolesOptions.Builder();
+			SemanticRolesOptions sro = srob.build();
+			builder.semanticRoles(sro);
+			
 		}
 
 		Features features = builder.build();
@@ -309,56 +318,87 @@ public class WatsonClient {
 		AnalysisResults response = service
 		  .analyze(parameters)
 		  .execute();
+	
+		
+		logger.info("Calling Watson NLU: FINISHED");
 		
 		return response;
 	}
 	
 	public static void printConfidentResults(AnalysisResults ar) {
 		
+	    logger.info("START +++++++++++++++++++++");
+	    logger.info(ar.getAnalyzedText());
+	      
 		List<ConceptsResult> concepts = ar.getConcepts();
 	
-		for (ConceptsResult cr : concepts) {
-			if (cr.getRelevance()>0.01) {
-				System.out.println("CONCEPT: "+cr.getText() + "/" + cr.getRelevance());
+		if (concepts!=null) {
+			for (ConceptsResult cr : concepts) {
+				if (cr.getRelevance()>0.01) {
+					logger.info("CONCEPT: "+cr.getText() + "/" + cr.getRelevance());
+				}
 			}
 		}
 		
 		List<KeywordsResult> keywords = ar.getKeywords();
 		
-		for (KeywordsResult kr : keywords) {
-			if (kr.getRelevance()>0.01) {
-				System.out.println("KEYWORD: "+kr.getText() + "/" + kr.getRelevance());
+		if (keywords!=null) {
+			for (KeywordsResult kr : keywords) {
+				if (kr.getRelevance()>0.01) {
+					logger.info("KEYWORD: "+kr.getText() + "/" + kr.getRelevance());
+				}
 			}
 		}
 		
 		List<CategoriesResult> categories = ar.getCategories();
 		
-		for (CategoriesResult catr : categories) {
-			if (catr.getScore()>0.01) {
-				System.out.println("CATEGORY: "+catr.getLabel() + "/" + catr.getScore());
-			}
-		}
-		
-		
-		List<EntitiesResult> entities = ar.getEntities();
-		
-		for (EntitiesResult e : entities) {
-			if (e.getRelevance()>0.01) {
-				System.out.println("ENTITY: "+e.getText() + "/" + e.getType() + "/" + e.getRelevance());
-			}
-		}
-		
-		List<RelationsResult> relations = ar.getRelations();
-		
-		for (RelationsResult e : relations) {
-			if (e.getScore()>0.01) {
-				System.out.println("RELATION: "+e.getType() );
-				for (RelationArgument ra : e.getArguments()) {
-					RelationEntity re = ra.getEntities().get(0);
-					System.out.println(" - " + ra.getText() + "\t" + re.getText() + "\t" + re.getType());
+		if (categories!=null) {
+			for (CategoriesResult catr : categories) {
+				if (catr.getScore()>0.01) {
+					logger.info("CATEGORY: "+catr.getLabel() + "/" + catr.getScore());
 				}
 			}
 		}
+		
+		List<EntitiesResult> entities = ar.getEntities();
+		
+		if (entities!=null) {
+			for (EntitiesResult e : entities) {
+				if (e.getRelevance()>0.01) {
+					logger.info("ENTITY: "+e.getText() + "/" + e.getType() + "/" + e.getRelevance());
+				}
+			}
+		}
+		List<RelationsResult> relations = ar.getRelations();
+		
+		if (relations!=null) {
+			for (RelationsResult e : relations) {
+				if (e.getScore()>0.01) {
+					logger.info("RELATION: "+e.getType() + ". Confidence = "+e.getScore());
+					for (RelationArgument ra : e.getArguments()) {
+						RelationEntity re = ra.getEntities().get(0);
+						logger.info(" - " + ra.getText() + "\t" + re.getText() + "\t" + re.getType());
+						if (ra.getEntities().size()>1) {
+							logger.warn("There are more entities to get!!");
+						}
+					}
+				}
+			}
+		}
+		
+		List<SemanticRolesResult> sem = ar.getSemanticRoles();
+		
+		if (sem!=null) {
+			for (SemanticRolesResult sr : sem) {
+					logger.info("SEMANTIC ROLE: " + sr.getAction().getText() + " (Verb = "+sr.getAction().getVerb().getText()+"/Tense = "+sr.getAction().getVerb().getTense()+ ")");
+					logger.info("  SUBJECT: " + sr.getSubject().getText());
+					if (sr.getObject()!=null) {
+						logger.info("  OBJECT " +  sr.getObject().getText());
+					}
+			}
+		}
+		
+	    logger.info("END +++++++++++++++++++++");
 		
 	}
 	
