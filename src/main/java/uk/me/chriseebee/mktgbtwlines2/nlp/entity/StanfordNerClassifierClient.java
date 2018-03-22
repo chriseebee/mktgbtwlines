@@ -2,14 +2,8 @@ package uk.me.chriseebee.mktgbtwlines2.nlp.entity;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.*;
-import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.sequences.DocumentReaderAndWriter;
-import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.Triple;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -49,10 +43,10 @@ public class StanfordNerClassifierClient {
 	public StanfordNerClassifierClient() {
       try {
 		classifier = CRFClassifier.getClassifier(serializedClassifier);
-	} catch (ClassCastException | ClassNotFoundException | IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+		} catch (ClassCastException | ClassNotFoundException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public List<CoreLabel> getEntities(List<? extends HasWord> sentence) {

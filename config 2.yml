@@ -1,0 +1,20 @@
+watsonKeys:
+  nluUsername: eec9be6c-8756-4563-a28a-36e609809f66
+  nluPassword: oVcOMbDjV2if
+googleParams:
+  apiKey: AIzaSyCzmoVVvAK7MHK3zCgPeo_vH2wUv0JJS6I
+  cx: '009406826760142307856:5ryno3mgt_a'
+  fields: 'kind,items(title,snippet,link)'
+  numResults: 10
+textRazorParams:
+  apiKey: 923cac8f943a250bc4f64e95f08e975b9a445f91909338c4d9605918
+msBingParams:
+  subKey: e9ed2d9090564e09b664340fc8efe85a
+runOptions:
+  execGoogleNLU: N
+  execWatsonNLU: Y
+  execRazorNLU: N
+  execBingSearch: Y
+  execGoogleSearch: Y
+  compareOrCombine: compare
+  createNGram: N

@@ -60,16 +60,6 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-	  <groupId>edu.cmu.sphinx</groupId>
-	  <artifactId>sphinx4-core</artifactId>
-	  <version>5prealpha-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-	  <groupId>edu.cmu.sphinx</groupId>
-	  <artifactId>sphinx4-data</artifactId>
-	  <version>5prealpha-SNAPSHOT</version>
-	</dependency>
 	<dependency>
     <groupId>com.ibm.watson.developer_cloud</groupId>
     <artifactId>java-sdk</artifactId>
@@ -146,7 +136,7 @@
       -->
       <groupId>io.netty</groupId>
       <artifactId>netty-tcnative-boringssl-static</artifactId>
-      <version>1.1.33.Fork20</version>
+      <version>1.1.33.Fork26</version>
       <classifier>${tcnative.classifier}</classifier>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->

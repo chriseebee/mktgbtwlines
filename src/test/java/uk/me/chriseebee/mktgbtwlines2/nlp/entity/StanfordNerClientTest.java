@@ -2,37 +2,31 @@ package uk.me.chriseebee.mktgbtwlines2.nlp.entity;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.ibm.watson.developer_cloud.alchemy.v1.model.Sentiment;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.TrueCaseTextAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.pipeline.TrueCaseAnnotator;
 import edu.stanford.nlp.util.CoreMap;
-import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
 
 public class StanfordNerClientTest {
 
 	String text = "This is a sentence about handbags and cars owned by Chris Bell and bought from Prada and BMW. This sentence is about tables and a chair that I got from Heals which has a nice vase on top which i got from  a guy called Roger in Manchester, which is made by Denby.";
 	Annotation document = null;
-	StanfordCoreNLP pipeline = null;
+	static StanfordCoreNLP pipeline = null;
 	
-	@Before
-	public void setup() {
+	@BeforeClass
+	public static void setup() {
 		
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse, truecase");
@@ -103,6 +97,40 @@ public class StanfordNerClientTest {
 		m.put("odeon", "ORGANIZATION");
 		m.put("carlisle", "LOCATION");
 		m.put("manchester", "LOCATION");
+		
+		double passRate = testSentences(text, m);
+		
+		if (passRate < 0.5) {
+			fail("Sucess Ratio = "+passRate);
+		} else {
+			assertTrue("Sucess Ratio= "+ passRate,true);
+		}
+	}
+	
+	@Test
+	public void test10lowercase() {
+		
+		String text = "My name is John and i like things like Table Noodle";
+		Map<String, String> m = Collections.synchronizedMap(new HashMap<String, String>());
+		m.put("table", "PERSON");
+		m.put("noodle", "PERSON");
+		
+		double passRate = testSentences(text, m);
+		
+		if (passRate < 0.5) {
+			fail("Sucess Ratio = "+passRate);
+		} else {
+			assertTrue("Sucess Ratio= "+ passRate,true);
+		}
+	}
+	
+	@Test
+	public void test11() {
+		
+		String text = "My name is Table Noodle";
+		Map<String, String> m = Collections.synchronizedMap(new HashMap<String, String>());
+		m.put("Table", "PERSON");
+		m.put("Noodle", "PERSON");
 		
 		double passRate = testSentences(text, m);
 		

@@ -1,14 +1,13 @@
 package uk.me.chriseebee.mktgbtwlines2.comms;
 
-import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.me.chriseebee.mktgbtwlines2.audio.TimedAudioBuffer;
-import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
-import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
+// import uk.me.chriseebee.mktgbtwlines2.nlp.InterestingEvent;
+// import uk.me.chriseebee.mktgbtwlines2.nlp.Transcription;
 
 public class ThreadCommsManager {
 	
@@ -33,9 +32,9 @@ public class ThreadCommsManager {
 
 	private ConcurrentLinkedQueue<TimedAudioBuffer> sentenceInSpeechDetectionQueue = new ConcurrentLinkedQueue<TimedAudioBuffer>();
 	
-	private ConcurrentLinkedQueue<InterestingEvent> storageMessageQueue = new ConcurrentLinkedQueue<InterestingEvent>();
+	// private ConcurrentLinkedQueue<InterestingEvent> storageMessageQueue = new ConcurrentLinkedQueue<InterestingEvent>();
 	
-	private ConcurrentLinkedQueue<Transcription> nlpMessageQueue = new ConcurrentLinkedQueue<Transcription>();
+	// private ConcurrentLinkedQueue<Transcription> nlpMessageQueue = new ConcurrentLinkedQueue<Transcription>();
 
 	public boolean isRecording() {
 		return recording;
@@ -53,14 +52,14 @@ public class ThreadCommsManager {
 		return sentenceInSpeechDetectionQueue;
 	}
 
-	public ConcurrentLinkedQueue<InterestingEvent> getStorageMessageQueue() {
-		return storageMessageQueue;
-	}
+	// public ConcurrentLinkedQueue<InterestingEvent> getStorageMessageQueue() {
+	// 	return storageMessageQueue;
+	// }
 
 
-	public ConcurrentLinkedQueue<Transcription> getNlpMessageQueue() {
-		return nlpMessageQueue;
-	}
+	// public ConcurrentLinkedQueue<Transcription> getNlpMessageQueue() {
+	// 	return nlpMessageQueue;
+	// }
 
 
 	

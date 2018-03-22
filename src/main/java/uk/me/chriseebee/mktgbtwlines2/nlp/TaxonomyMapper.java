@@ -74,18 +74,28 @@ public class TaxonomyMapper {
 		
 		System.out.println("Length = "+categories.size());
 		java.util.Iterator<String> iter = categories.iterator();
+		BufferedWriter bw  = null;
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/cbell/Documents/java_workspace/mktgbtwlines2/resources/ner/train2.data.txt"));
+			bw = new BufferedWriter(new FileWriter("/Users/cbell/Documents/java_workspace/mktgbtwlines2/resources/ner/train2.data.txt"));
 			
 			while (iter.hasNext()) {
 		
 			//bw.write(iter.next() + "\tPRODUCT\n");
 				bw.write(iter.next() + "\n");
 			}
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
+		} finally {
+			try {
+				bw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

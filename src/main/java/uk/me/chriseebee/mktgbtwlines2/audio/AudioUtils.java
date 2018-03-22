@@ -116,7 +116,7 @@ public class AudioUtils {
 	
 	
     public static AudioFormat getAudioFormat() {
-        float sampleRate = 16000;
+        float sampleRate = 16000.0F;
         int sampleSizeInBits = 16;
         int channels = 1;
         boolean signed = true;
@@ -125,9 +125,10 @@ public class AudioUtils {
                                              channels, signed, bigEndian);
         
         return format;
-    }
+	}
+	
     
-	public void setupRecording() {
+	public TargetDataLine setupRecording() throws Exception {
 	    
         try {
             AudioFormat format = getAudioFormat();
@@ -141,23 +142,49 @@ public class AudioUtils {
             }
             
            printMixers();
-            
-            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
-            Mixer mixer = AudioSystem.getMixer(mixerInfo[0]); 
-     
-           printMixerSupport (mixer);
-            
-            line = (TargetDataLine)mixer.getLine(info);
+			
+		   
+		   // line = (TargetDataLine)mixer.getLine(info);
+		    line = getMicrophone();
             line.open(format);
             line.start();   // start capturing
  
             logger.info("Start capturing...");
  
-            ais = new AudioInputStream(line);
+			//ais = new AudioInputStream(line);
+			return line;
  
         } catch (LineUnavailableException ex) {
-            logger.error("Line Unavailable",ex);
+			logger.error("Line Unavailable",ex);
+			throw new Exception("Can't open line");
         }
+	}
+	
+	TargetDataLine getMicrophone() {
+        Mixer.Info[] mixers = AudioSystem.getMixerInfo();
+        for (Mixer.Info mixerInfo : mixers) {
+			Mixer m = AudioSystem.getMixer(mixerInfo);
+			
+			printMixerSupport (m);
+            try {
+                m.open();
+                m.close();
+            } catch (Exception e) {
+                continue;
+            }
+
+            Line.Info[] lines = m.getTargetLineInfo();
+            for (Line.Info li : lines) {
+                try {
+                    TargetDataLine temp = (TargetDataLine) AudioSystem.getLine(li);
+                    if (temp != null) {
+                        return temp;
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        return null;
     }
 
 	public AudioInputStream getAudioInputStream() {

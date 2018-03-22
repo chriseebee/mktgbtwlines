@@ -2,19 +2,12 @@ package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
 
-import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,26 +19,6 @@ import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.Ke
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.RelationsResult;
 import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.SemanticRolesResult;
 
-import edu.stanford.nlp.ie.util.RelationTriple;
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.ling.CoreAnnotations.MentionsAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
-import edu.stanford.nlp.naturalli.NaturalLogicAnnotations;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.trees.GrammaticalRelation;
-import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalStructureFactory;
-import edu.stanford.nlp.trees.PennTreebankLanguagePack;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.trees.TypedDependency;
-import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
-import edu.stanford.nlp.util.CoreMap;
 import semantics.Compare;
 import uk.me.chriseebee.mktgbtwlines.speech2text.ibm.WatsonClient;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;

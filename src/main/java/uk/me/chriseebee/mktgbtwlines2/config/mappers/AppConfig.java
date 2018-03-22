@@ -11,7 +11,15 @@ public class AppConfig {
 	private Map<String, String> audioOptions;
 	private Map<String, String> audioClipStorageOptions;
 	private Map<String, String> dandelionKeys;
+	private Map<String, String> s2tParams;
 	
+	public Map<String, String> getS2tParams() {
+		return s2tParams;
+	}
+	public void setS2tParams(Map<String, String> s2tParams) {
+		this.s2tParams = s2tParams;
+	}
+
 	public Map<String, String> getDandelionKeys() {
 		return dandelionKeys;
 	}

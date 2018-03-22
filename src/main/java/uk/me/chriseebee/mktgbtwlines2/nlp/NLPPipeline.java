@@ -25,7 +25,6 @@ import uk.me.chriseebee.mktgbtwlines.speech2text.ibm.WatsonClient;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigurationException;
 import uk.me.chriseebee.mktgbtwlines2.nlp.entity.Entity;
-import uk.me.chriseebee.mktgbtwlines2.nlp.ibm.AlchemyClient;
 
 public class NLPPipeline {
 
@@ -40,12 +39,12 @@ public class NLPPipeline {
 			logger.info("Setting up 1");
 			props = new Properties();
 			logger.info("Setting up 2");
-			props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse");
+			//props.setProperty("annotators", "tokenize, ssplit, pos, parse, depparse, truecase");
 			props.setProperty("annotators", "tokenize,ssplit,parse,truecase,pos,lemma,depparse,ner,regexner,natlog,openie,entitymentions");
-		    props.setProperty("pos.model","edu/stanford/nlp/models/pos-tagger/english-caseless-left3words-distsim.tagger");
-		    props.setProperty("parse.model","edu/stanford/nlp/models/lexparser/englishPCFG.caseless.ser.gz");
-		    props.setProperty("ner.model","edu/stanford/nlp/models/ner/english.all.3class.caseless.distsim.crf.ser.gz,edu/stanford/nlp/models/ner/english.muc.7class.caseless.distsim.crf.ser.gz,edu/stanford/nlp/models/ner/english.conll.4class.caseless.distsim.crf.ser.gz");
-		    props.setProperty("truecase.overwriteText","true");
+		    //props.setProperty("pos.model","edu/stanford/nlp/models/pos-tagger/english-caseless-left3words-distsim.tagger");
+		    //props.setProperty("parse.model","edu/stanford/nlp/models/lexparser/englishPCFG.caseless.ser.gz");
+		    //props.setProperty("ner.model","edu/stanford/nlp/models/ner/english.all.3class.caseless.distsim.crf.ser.gz,edu/stanford/nlp/models/ner/english.muc.7class.caseless.distsim.crf.ser.gz,edu/stanford/nlp/models/ner/english.conll.4class.caseless.distsim.crf.ser.gz");
+		    //props.setProperty("truecase.overwriteText","true");
 		    //props.setProperty("openie.affinity_probability_cap","0.1");
 		    //props.setProperty("openie.triple.all_nominals","true");
 		    props.setProperty("regexner.mapping", "/Users/cbell/Documents/java_workspace/mktgbtwlines2/src/test/resources/regexner.txt");
@@ -103,8 +102,8 @@ public class NLPPipeline {
 			
 			logger.debug(sentence.toString());
 			
-			AnalysisResults ar = wc.process(sentence.toString(),null);
-			List<InterestingEvent> ieList = wc.mapEntities(ar);
+			AnalysisResults ar = WatsonClient.process(sentence.toString(),null);
+			List<InterestingEvent> ieList = WatsonClient.mapEntities(ar);
 			
 			String sentenceCategory = ieList.get(0).getEntity().getCategory();
 
@@ -116,7 +115,7 @@ public class NLPPipeline {
 			removeKnownEntitiesFromSentence(sentence.toString(),words, ieList);
 
 			// TODO: Replace with a classifier
-			String intents = nem.getIntents(words);
+			String intents = NamedEntityManager.getIntents(words);
 
 			// traversing the words in the current sentence
 			// a CoreLabel is a CoreMap with additional token-specific methods
@@ -148,7 +147,7 @@ public class NLPPipeline {
 
 					// Also it is critical that a brand name before or after a
 					// product are recognized separately
-					String res = nem.isWordRecognized(word, null);
+					String res = NamedEntityManager.isWordRecognized(word, null);
 
 					if (res != null) {
 
@@ -252,7 +251,7 @@ public class NLPPipeline {
 			ev.setEntity(e);
 			sendInterestingEventToStorage(ev);
 		} else {
-			String nounType3 = nem.isPhraseRecognized(sentence.toString(), null);
+			String nounType3 = NamedEntityManager.isPhraseRecognized(sentence.toString(), null);
 
 			if (nounType3 != null) {
 				logger.info("Phrase=" + sentence.toString() + ", has been identified as " + nounType3);

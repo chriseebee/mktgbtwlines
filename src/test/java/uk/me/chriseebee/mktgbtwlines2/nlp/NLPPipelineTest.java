@@ -6,7 +6,6 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -14,7 +13,6 @@ import com.ibm.watson.developer_cloud.natural_language_understanding.v1.model.An
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
-import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 import uk.me.chriseebee.mktgbtwlines.speech2text.ibm.WatsonClient;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
@@ -138,8 +136,8 @@ public class NLPPipelineTest {
 		// Simple test with 1 single word entity occuring once
 		CoreMap sentence = getSentence("I wanted to go and see Robert for a few drinks");
 		System.out.println("SENTENCE: "+sentence);
-		AnalysisResults ar = wc.process(sentence.toString(),null);
-		List<InterestingEvent> ieList = wc.mapEntities(ar);
+		AnalysisResults ar = WatsonClient.process(sentence.toString(),null);
+		List<InterestingEvent> ieList = WatsonClient.mapEntities(ar);
 		
 		List<CoreLabel> words = sentence.get(TokensAnnotation.class);
 		
@@ -167,8 +165,8 @@ public class NLPPipelineTest {
 		// Simple test with 2 single word entity occuring once
 		CoreMap sentence = getSentence("I wanted to go and see Robert for a few drinks with Mary and her dog");
 		System.out.println("SENTENCE: "+sentence);
-		AnalysisResults ar = wc.process(sentence.toString(),null);
-		List<InterestingEvent> ieList = wc.mapEntities(ar);
+		AnalysisResults ar = WatsonClient.process(sentence.toString(),null);
+		List<InterestingEvent> ieList = WatsonClient.mapEntities(ar);
 		
 		List<CoreLabel> words = sentence.get(TokensAnnotation.class);
 		
@@ -196,8 +194,8 @@ public class NLPPipelineTest {
 		// multi-word entity occuring once
 		CoreMap sentence = getSentence("I wanted to buy a Louis Vuitton handbag tomorrow");
 		System.out.println("SENTENCE: "+sentence);
-		AnalysisResults ar = wc.process(sentence.toString(),null);
-		List<InterestingEvent> ieList = wc.mapEntities(ar);
+		AnalysisResults ar = WatsonClient.process(sentence.toString(),null);
+		List<InterestingEvent> ieList = WatsonClient.mapEntities(ar);
 		
 		List<CoreLabel> words = sentence.get(TokensAnnotation.class);
 		
@@ -225,8 +223,8 @@ public class NLPPipelineTest {
 		// multi-word entity occuring once and multiple single word entities
 		CoreMap sentence = getSentence("I wanted to buy a Louis Vuitton handbag tomorrow to give to Lucy for her birthday before Arthur finds out");
 		System.out.println("SENTENCE: "+sentence);
-		AnalysisResults ar = wc.process(sentence.toString(),null);
-		List<InterestingEvent> ieList = wc.mapEntities(ar);
+		AnalysisResults ar = WatsonClient.process(sentence.toString(),null);
+		List<InterestingEvent> ieList = WatsonClient.mapEntities(ar);
 		
 		List<CoreLabel> words = sentence.get(TokensAnnotation.class);
 		

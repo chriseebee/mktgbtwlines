@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 import uk.me.chriseebee.mktgbtwlines2.config.ConfigLoader;
 import uk.me.chriseebee.mktgbtwlines2.config.mappers.AppConfig;
-import uk.me.chriseebee.mktgbtwlines2.storage.AudioClipStore;
+//import uk.me.chriseebee.mktgbtwlines2.storage.AudioClipStore;
 
 import com.darkprograms.speech.microphone.MicrophoneAnalyzer;
 
@@ -126,11 +126,11 @@ public class NoiseTrigger extends Thread {
     	tab.setEndDateTime(System.currentTimeMillis());
     	logger.info("Block of speech identified is "+tab.getLength()/1000+" seconds long");
     	ThreadCommsManager.getInstance().getSentenceInSpeechDetectionQueue().add(tab);
-    	try {
-			AudioClipStore.getInstance(AudioClipStore.STORE_TYPE_DATABASE).insertBlock(tab);
-		} catch (Exception e) {
-			logger.error("Error inserting audio block",e);
-		}
+    	// try {
+		// 	AudioClipStore.getInstance(AudioClipStore.STORE_TYPE_DATABASE).insertBlock(tab);
+		// } catch (Exception e) {
+		// 	logger.error("Error inserting audio block",e);
+		// }
     }
     
 	private void ambientListeningLoop() {

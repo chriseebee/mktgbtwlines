@@ -7,9 +7,6 @@ import org.slf4j.LoggerFactory;
 import uk.me.chriseebee.mktgbtwlines2.comms.ThreadCommsManager;
 
 import java.io.IOException;
-import java.util.Date;
-
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.TargetDataLine;
  
 /**
@@ -46,8 +43,12 @@ public class AudioRecorder extends Thread {
     TargetDataLine line;
     
     public AudioRecorder() {
-    	au = new AudioUtils();
-    	au.setupRecording();
+        au = new AudioUtils();
+        try {
+            line = au.setupRecording();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
     }
 
     /**

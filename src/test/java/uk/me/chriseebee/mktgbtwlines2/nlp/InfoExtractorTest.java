@@ -2,53 +2,91 @@ package uk.me.chriseebee.mktgbtwlines2.nlp;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.stream.Collectors;
+
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.naturalli.NaturalLogicAnnotations;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.trees.GrammaticalRelation;
-import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalStructureFactory;
-import edu.stanford.nlp.trees.PennTreebankLanguagePack;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
-import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.trees.TypedDependency;
-import edu.stanford.nlp.ie.util.RelationTriple;
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreAnnotations.MentionsAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.NormalizedNamedEntityTagAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
-import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
-import edu.stanford.nlp.util.CoreMap;
-import semantics.Compare;
-import uk.me.chriseebee.mktgbtwlines2.Utils;
-
 public class InfoExtractorTest {
-
-	double confidence = 0.8;
+	
+	@Test
+	public void test1() {
+		InfoExtractor.extractInfoFrom("Boris wanted to go on holiday","STANFORD","ENTITY,RELATION");
+	}
 	
 //	@Test
 //	public void test1() {
-//		InfoExtractor.extractInfoFrom("The Mulberry Bush is a pub, is located in New York and serves Korean food");
+//		InfoExtractor.extractInfoFrom("My name is Geoff and i need a mortgage so I can buy a new house","STANFORD","ENTITY,RELATION");
 //	}
 //	
+//	@Test
+//	public void test2() {
+//		InfoExtractor.extractInfoFrom("I am 47 years old and i am splitting up from my wife","STANFORD","ENTITY,RELATION");
+//	}
+	
+//	
+//	@Test
+//	public void test2() {
+//		InfoExtractor.extractInfoFrom("Alpha Snapper sits next to Table Noodle","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test3() {
+//		InfoExtractor.extractInfoFrom("The lady called Table Noodle is sitting next to the man known as Alpha Snapper","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test4() {
+//		InfoExtractor.extractInfoFrom("The lady is called Table Noodle","STANFORD","ENTITY,RELATION");
+//	}
+	
+//	@Test
+//	public void test5() {
+//		InfoExtractor.extractInfoFrom("My name is Table Noodle","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test5a() {
+//		InfoExtractor.extractInfoFrom("Her name is Table Noodle","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test5b() {
+//		InfoExtractor.extractInfoFrom("He is called Table Noodle","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test6() {
+//		InfoExtractor.extractInfoFrom("Chris Bell went to Manchester on holiday","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test6a() {
+//		InfoExtractor.extractInfoFrom("Chris Bell went to Manchester on holiday with Michelle","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test7() {
+//		InfoExtractor.extractInfoFrom("My car has a steering wheel","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test8() {
+//		InfoExtractor.extractInfoFrom("The car has a steering wheel","STANFORD","ENTITY,RELATION");
+//	}
+//	
+//	@Test
+//	public void test9() {
+//		InfoExtractor.extractInfoFrom("My credit card has a limit of £3000","STANFORD","ENTITY,RELATION");
+//	}
+//	@Test
+//	public void test9a() {
+//		InfoExtractor.extractInfoFrom("i seem to have exceeded that limit","STANFORD","ENTITY,RELATION");
+//	}
+	
+	
+	
 //	@Test
 //	public void test1z() {
 //		InfoExtractor.extractInfoFrom("The Mulberry Bush is not a pub");

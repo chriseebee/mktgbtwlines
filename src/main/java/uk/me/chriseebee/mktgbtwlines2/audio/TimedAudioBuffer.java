@@ -1,7 +1,6 @@
 package uk.me.chriseebee.mktgbtwlines2.audio;
 
 import java.io.Serializable;
-import java.util.Date;
 
 
 public class TimedAudioBuffer implements Serializable {
